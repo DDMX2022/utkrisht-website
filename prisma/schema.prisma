@@ -1,0 +1,101 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite" // switched from postgresql to sqlite for local dev
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String      @id @default(cuid())
+  name           String?
+  email          String      @unique
+  hashedPassword String
+  role           String      @default("USER") // changed from Role enum to String
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  posts          BlogPost[]
+  projects       Project[]
+}
+
+model Media {
+  id           String   @id @default(cuid())
+  publicId     String   @unique
+  url          String
+  width        Int?
+  height       Int?
+  format       String?
+  resourceType String?
+  folder       String?
+  bytes        Int?
+  createdAt    DateTime @default(now())
+  // added meta fields
+  title        String?
+  category     String?
+  projectImages ProjectImage[]
+  coverPosts    BlogPost[]      @relation("CoverImage")
+}
+
+model Project {
+  id        String         @id @default(cuid())
+  title     String
+  category  String
+  status    String         @default("Draft")
+  summary   String?
+  content   String?
+  images    ProjectImage[]
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+  author    User?          @relation(fields: [authorId], references: [id])
+  authorId  String?
+}
+
+model ProjectImage {
+  id        String   @id @default(cuid())
+  url       String
+  order     Int      @default(0)
+  project   Project  @relation(fields: [projectId], references: [id])
+  projectId String
+  mediaId   String?  
+  media     Media?   @relation(fields: [mediaId], references: [id])
+}
+
+model BlogPost {
+  id          String   @id @default(cuid())
+  title       String
+  status      String   @default("Draft")
+  excerpt     String?
+  content     String?
+  views       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  author      User?    @relation(fields: [authorId], references: [id])
+  authorId    String?
+  coverImageId String? 
+  coverImage   Media?   @relation("CoverImage", fields: [coverImageId], references: [id])
+  externalUrl  String?  // optional external link
+  authorName   String?  // NEW: display writer name
+}
+
+model ContactInquiry {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  phone     String?
+  service   String?
+  message   String
+  status    String   @default("New")
+  createdAt DateTime @default(now())
+}
+
+model PortfolioItem {
+  id          String   @id @default(cuid())
+  title       String
+  category    String
+  status      String   @default("Draft")
+  description String?
+  imageUrl    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
