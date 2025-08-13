@@ -66,6 +66,7 @@ export async function POST(req: NextRequest) {
     }
 
     if (!file || !(file instanceof File)) {
+      console.log('[UPLOAD_DEBUG] File validation failed:', { file, isFile: file instanceof File });
       return NextResponse.json({ error: 'No file provided' }, { status: 400 });
     }
 
@@ -159,6 +160,13 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(media, { status: 201 });
   } catch (err: any) {
+    console.error('[UPLOAD_ERROR] Full error details:', {
+      message: err?.message,
+      code: err?.code,
+      http_code: err?.http_code,
+      stack: err?.stack?.split('\n').slice(0, 5),
+      cloudinaryError: err?.error,
+    });
     if (err?.http_code === 400 && /File size too large/i.test(err.message)) {
       return NextResponse.json(
         { error: 'Cloudinary: file too large (limit 10MB on free plan)' },
@@ -177,6 +185,6 @@ export async function POST(req: NextRequest) {
       return res;
     }
     console.error('[UPLOAD_ERROR]', err);
-    return NextResponse.json({ error: 'Upload failed' }, { status: 500 });
+    return NextResponse.json({ error: `Upload failed: ${err?.message || 'Unknown error'}` }, { status: 500 });
   }
 }
