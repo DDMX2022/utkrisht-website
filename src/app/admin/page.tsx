@@ -21,10 +21,13 @@ import GalleryManager from '@/components/admin/GalleryManager';
 import MediaManager from '@/components/admin/MediaManager';
 import PortfolioManager from '@/components/admin/PortfolioManager';
 import ProjectsManager from '@/components/admin/ProjectsManager';
-import { signOut } from 'next-auth/react';
-import { useState } from 'react';
+import { signOut, useSession } from 'next-auth/react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function AdminDashboard() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState('projects'); // default to projects now
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [passwordForm, setPasswordForm] = useState({
@@ -35,6 +38,35 @@ export default function AdminDashboard() {
   });
   const [savingPwd, setSavingPwd] = useState(false);
   const [pwdMsg, setPwdMsg] = useState<string | null>(null);
+
+  // Authentication check
+  useEffect(() => {
+    if (status === 'loading') return; // Still loading
+
+    if (status === 'unauthenticated') {
+      router.push('/login');
+      return;
+    }
+
+    if (session?.user && !(session.user as any)?.role?.match(/^(ADMIN|SUPERADMIN)$/)) {
+      router.push('/login');
+      return;
+    }
+  }, [session, status, router]);
+
+  // Show loading state while checking authentication
+  if (status === 'loading') {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-lg">Loading...</div>
+      </div>
+    );
+  }
+
+  // Show nothing if not authenticated (will redirect)
+  if (status === 'unauthenticated' || !session?.user || !(session.user as any)?.role?.match(/^(ADMIN|SUPERADMIN)$/)) {
+    return null;
+  }
 
   const sidebarItems = [
     // Removed dashboard
