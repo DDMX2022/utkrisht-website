@@ -132,11 +132,15 @@ export default function Portfolio() {
           </div>
         )}
 
-        <div className='text-center mt-12'>
-          <Button size='lg' className='bg-gray-900 hover:bg-gray-800'>
+        {/* <div className='text-center mt-12'>
+          <Button
+            size='lg'
+            className='bg-gray-900 hover:bg-gray-800'
+            onClick={() => setActiveCategory('All')}
+          >
             View All Projects
           </Button>
-        </div>
+        </div> */}
       </div>
 
       {/* Modal */}

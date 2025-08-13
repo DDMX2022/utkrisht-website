@@ -2,9 +2,14 @@ generator client {
   provider = "prisma-client-js"
 }
 
+// Switch to PostgreSQL for deployment
+// DATABASE_URL is used at runtime (e.g., Prisma Accelerate URL)
+// POSTGRES_URL is the direct connection used for migrations
+
 datasource db {
-  provider = "sqlite" // switched from postgresql to sqlite for local dev
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("POSTGRES_URL")
 }
 
 model User {

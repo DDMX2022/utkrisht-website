@@ -6,12 +6,21 @@ import { Menu, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
-import LoginForm from '@/components/LoginForm';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [loginOpen, setLoginOpen] = useState(false);
+  const [quoteOpen, setQuoteOpen] = useState(false); // NEW
+  const [submitting, setSubmitting] = useState(false); // NEW
+  const [formError, setFormError] = useState<string | null>(null); // NEW
+  const [formSuccess, setFormSuccess] = useState(false); // NEW
+  const [form, setForm] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    service: '',
+    message: '',
+  }); // NEW
 
   useEffect(() => {
     const handleScroll = () => {
@@ -30,6 +39,27 @@ export default function Header() {
     { name: 'Blog', href: '#blog' },
     { name: 'Contact', href: '#contact' },
   ];
+
+  async function submitQuote(e: React.FormEvent) {
+    e.preventDefault();
+    setSubmitting(true);
+    setFormError(null);
+    setFormSuccess(false);
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      });
+      if (!res.ok) throw new Error((await res.json()).error || 'Failed');
+      setFormSuccess(true);
+      setForm({ name: '', email: '', phone: '', service: '', message: '' });
+    } catch (err: any) {
+      setFormError(err?.message || 'Submission failed');
+    } finally {
+      setSubmitting(false);
+    }
+  }
 
   return (
     <header
@@ -58,35 +88,12 @@ export default function Header() {
           </nav>
 
           <div className='hidden md:flex items-center gap-3'>
-            <Button className='bg-gray-900 hover:bg-gray-800 text-white'>
+            <Button
+              className='bg-gray-900 hover:bg-gray-800 text-white'
+              onClick={() => setQuoteOpen(true)}
+            >
               Get Quote
             </Button>
-            <Dialog.Root open={loginOpen} onOpenChange={setLoginOpen}>
-              <Dialog.Trigger asChild>
-                <Button
-                  variant='outline'
-                  className='border-gray-300 hover:bg-gray-100'
-                >
-                  Login
-                </Button>
-              </Dialog.Trigger>
-              <Dialog.Portal>
-                <Dialog.Overlay className='fixed inset-0 z-[120] bg-black/50 data-[state=open]:animate-in data-[state=closed]:animate-out' />
-                <Dialog.Content className='fixed left-1/2 top-1/2 z-[130] w-full max-w-md -translate-x-1/2 -translate-y-1/2 rounded-lg bg-white p-6 shadow-xl focus:outline-none data-[state=open]:animate-in data-[state=closed]:animate-out'>
-                  <div className='flex items-start justify-between mb-4'>
-                    <Dialog.Title className='text-xl font-semibold text-gray-900'>
-                      Admin Login
-                    </Dialog.Title>
-                    <Dialog.Close asChild>
-                      <button className='text-gray-500 hover:text-gray-700'>
-                        <X className='h-5 w-5' />
-                      </button>
-                    </Dialog.Close>
-                  </div>
-                  <LoginForm onSuccess={() => setLoginOpen(false)} />
-                </Dialog.Content>
-              </Dialog.Portal>
-            </Dialog.Root>
           </div>
 
           <div className='md:hidden'>
@@ -119,22 +126,130 @@ export default function Header() {
                 {item.name}
               </a>
             ))}
-            <Button className='w-full mt-4 bg-gray-900 hover:bg-gray-800 text-white'>
-              Get Quote
-            </Button>
             <Button
-              variant='outline'
-              className='w-full border-gray-300 hover:bg-gray-100'
+              className='w-full mt-4 bg-gray-900 hover:bg-gray-800 text-white'
               onClick={() => {
-                setLoginOpen(true);
+                setQuoteOpen(true);
                 setIsMenuOpen(false);
               }}
             >
-              Login
+              Get Quote
             </Button>
           </div>
         </div>
       )}
+
+      {/* Get Quote Modal */}
+      <Dialog.Root open={quoteOpen} onOpenChange={setQuoteOpen}>
+        <Dialog.Portal>
+          <Dialog.Overlay className='fixed inset-0 z-[140] bg-black/60 data-[state=open]:animate-in data-[state=closed]:animate-out' />
+          <Dialog.Content className='fixed left-1/2 top-1/2 z-[150] w-full max-w-lg -translate-x-1/2 -translate-y-1/2 rounded-lg bg-white p-6 shadow-2xl focus:outline-none data-[state=open]:animate-in data-[state=closed]:animate-out'>
+            <div className='flex items-start justify-between mb-4'>
+              <Dialog.Title className='text-xl font-semibold text-gray-900'>
+                Request a Quote
+              </Dialog.Title>
+              <Dialog.Close asChild>
+                <button className='text-gray-500 hover:text-gray-700'>
+                  <X className='h-5 w-5' />
+                </button>
+              </Dialog.Close>
+            </div>
+            <form onSubmit={submitQuote} className='space-y-4'>
+              <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                <div>
+                  <label className='block text-sm font-medium text-gray-700 mb-1'>
+                    Name *
+                  </label>
+                  <input
+                    required
+                    className='w-full border rounded px-3 py-2'
+                    value={form.name}
+                    onChange={(e) => setForm({ ...form, name: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <label className='block text-sm font-medium text-gray-700 mb-1'>
+                    Email *
+                  </label>
+                  <input
+                    type='email'
+                    required
+                    className='w-full border rounded px-3 py-2'
+                    value={form.email}
+                    onChange={(e) =>
+                      setForm({ ...form, email: e.target.value })
+                    }
+                  />
+                </div>
+                <div>
+                  <label className='block text-sm font-medium text-gray-700 mb-1'>
+                    Phone
+                  </label>
+                  <input
+                    className='w-full border rounded px-3 py-2'
+                    value={form.phone}
+                    onChange={(e) =>
+                      setForm({ ...form, phone: e.target.value })
+                    }
+                  />
+                </div>
+                <div>
+                  <label className='block text-sm font-medium text-gray-700 mb-1'>
+                    Service
+                  </label>
+                  <select
+                    className='w-full border rounded px-3 py-2'
+                    value={form.service}
+                    onChange={(e) =>
+                      setForm({ ...form, service: e.target.value })
+                    }
+                  >
+                    <option value=''>Select</option>
+                    <option>Residential Design</option>
+                    <option>Commercial Design</option>
+                    <option>Turnkey Project</option>
+                    <option>Renovation</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label className='block text-sm font-medium text-gray-700 mb-1'>
+                  Message *
+                </label>
+                <textarea
+                  required
+                  rows={4}
+                  className='w-full border rounded px-3 py-2'
+                  value={form.message}
+                  onChange={(e) =>
+                    setForm({ ...form, message: e.target.value })
+                  }
+                />
+              </div>
+              {formError && (
+                <div className='text-sm text-red-600'>{formError}</div>
+              )}
+              {formSuccess && (
+                <div className='text-sm text-green-600'>
+                  Sent successfully. We will contact you shortly.
+                </div>
+              )}
+              <div className='flex justify-end gap-3 pt-2'>
+                <Dialog.Close asChild>
+                  <Button variant='outline'>Close</Button>
+                </Dialog.Close>
+                <Button
+                  type='submit'
+                  disabled={submitting}
+                  className='bg-gray-900 hover:bg-gray-800 text-white'
+                >
+                  {submitting ? 'Sending...' : 'Send Request'}
+                </Button>
+              </div>
+            </form>
+          </Dialog.Content>
+        </Dialog.Portal>
+      </Dialog.Root>
     </header>
   );
 }

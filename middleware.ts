@@ -5,7 +5,8 @@ export async function middleware(req: any) {
   const url = req.nextUrl.clone();
   if (url.pathname.startsWith('/admin')) {
     const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
-    if (!token || (token as any).role !== 'ADMIN') {
+    const role = (token as any)?.role;
+    if (!token || (role !== 'ADMIN' && role !== 'SUPERADMIN')) {
       url.pathname = '/login';
       return NextResponse.redirect(url);
     }
