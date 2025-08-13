@@ -4,7 +4,8 @@ import { getToken } from 'next-auth/jwt';
 
 export async function requireAdmin(req: NextRequest) {
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
-  if (!token || (token as any).role !== 'ADMIN') {
+  const role = (token as any)?.role;
+  if (!token || (role !== 'ADMIN' && role !== 'SUPERADMIN')) {
     return null;
   }
   return token;
