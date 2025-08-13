@@ -35,6 +35,9 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json(media);
   } catch (e) {
-    return NextResponse.json({ error: 'Failed to load media' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to load media' },
+      { status: 500 }
+    );
   }
 }

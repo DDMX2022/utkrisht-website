@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAdmin, unauthorized } from '@/lib/admin';
+
 import { db } from '@/lib/db';
 
 const pdb: any = db as any;
@@ -7,7 +8,9 @@ const pdb: any = db as any;
 export async function GET(req: NextRequest) {
   const admin = await requireAdmin(req);
   if (!admin) return unauthorized();
-  const items = await pdb.portfolioItem.findMany({ orderBy: { createdAt: 'desc' } });
+  const items = await pdb.portfolioItem.findMany({
+    orderBy: { createdAt: 'desc' },
+  });
   return NextResponse.json(items);
 }
 

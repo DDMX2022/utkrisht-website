@@ -6,7 +6,10 @@ export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
     const limitParam = searchParams.get('limit');
-    const limit = Math.max(1, Math.min(50, parseInt(limitParam || '1', 10) || 1));
+    const limit = Math.max(
+      1,
+      Math.min(50, parseInt(limitParam || '1', 10) || 1)
+    );
 
     const items = await db.media.findMany({
       where: {
@@ -21,6 +24,9 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json(items);
   } catch (e) {
-    return NextResponse.json({ error: 'Failed to load about media' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to load about media' },
+      { status: 500 }
+    );
   }
 }
