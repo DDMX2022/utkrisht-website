@@ -131,7 +131,7 @@ export async function POST(req: NextRequest) {
         e?.code === 'ECONNRESET' ||
         e?.code === 'ETIMEDOUT' ||
         e?.code === 'EAI_AGAIN' ||
-        /upstream|temporarily unavailable|server error|timeout/i.test(msg)
+        /upstream|temporarily unavailable|server error|timeout|invalid json response|unexpected token/i.test(msg)
       );
     };
     const uploadOnce = () =>
@@ -329,7 +329,12 @@ export async function POST(req: NextRequest) {
     }
     if (http && http >= 500) {
       return NextResponse.json(
-        { error: 'Cloudinary upstream error. Please retry.', code: 'UPSTREAM' },
+        { 
+          error: /invalid json response|unexpected token|doctype/i.test(msg) 
+            ? 'Cloudinary API is returning HTML error pages instead of JSON. Their service is degraded - retry in a few minutes.'
+            : 'Cloudinary upstream error. Please retry.', 
+          code: 'UPSTREAM' 
+        },
         { status: 502 }
       );
     }

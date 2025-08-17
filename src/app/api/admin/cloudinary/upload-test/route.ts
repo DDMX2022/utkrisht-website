@@ -55,7 +55,7 @@ export async function GET(req: NextRequest) {
     const shouldRetry = (e: any) => {
       const http = e?.http_code ?? e?.statusCode ?? e?.status ?? e?.error?.http_code;
       const msg = (e?.message || e?.error?.message || '').toString();
-      return http >= 500 || ['ECONNRESET', 'ETIMEDOUT', 'EAI_AGAIN'].includes(e?.code) || /upstream|server error|timeout/i.test(msg);
+      return http >= 500 || ['ECONNRESET', 'ETIMEDOUT', 'EAI_AGAIN'].includes(e?.code) || /upstream|server error|timeout|invalid json response|unexpected token/i.test(msg);
     };
 
     let res: any;
