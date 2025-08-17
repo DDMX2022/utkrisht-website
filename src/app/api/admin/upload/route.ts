@@ -180,16 +180,19 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(media, { status: 201 });
   } catch (err: any) {
+    // Normalize Cloudinary error shape
+    const http = err?.http_code ?? err?.statusCode ?? err?.status ?? err?.error?.http_code;
+    const msg = (err?.message || err?.error?.message || '').toString();
     // Cloudinary sometimes includes request echo in error.message when auth fails; do not log raw message
     const isAuthError =
-      typeof err?.message === 'string' && /invalid\s*api_key|api\s*key\s*invalid/i.test(err.message);
+      http === 401 || http === 403 || /invalid\s*(api[_\s-]?key|signature|credentials)/i.test(msg);
     console.error('[UPLOAD_ERROR] Summary:', {
       code: err?.code,
-      http_code: err?.http_code,
+      http_code: http,
       kind: isAuthError ? 'CLOUDINARY_AUTH' : 'GENERIC',
       stack: err?.stack ? String(err.stack).split('\n').slice(0, 3) : undefined,
     });
-    if (err?.http_code === 400 && /File size too large/i.test(err.message)) {
+    if ((http === 400) && /File size too large/i.test(msg)) {
       return NextResponse.json(
         { error: 'Cloudinary: file too large (limit 10MB on free plan)', code: 'FILE_TOO_LARGE' },
         { status: 413 }
@@ -213,20 +216,32 @@ export async function POST(req: NextRequest) {
         { status: 500 }
       );
     }
-    if (err?.http_code === 400 && /Invalid image file|Unsupported image format/i.test(err?.message || '')) {
+    if ((http === 400) && /Invalid image file|Unsupported image format/i.test(msg)) {
       return NextResponse.json(
         { error: 'Invalid or unsupported image file.', code: 'BAD_IMAGE' },
         { status: 400 }
       );
     }
-    if (err?.http_code === 499 || /timeout/i.test(err?.message || '')) {
+    if (http === 499 || /timeout/i.test(msg)) {
       return NextResponse.json(
         { error: 'Upload timed out. Please retry.', code: 'TIMEOUT' },
         { status: 504 }
       );
     }
+    if (http === 429) {
+      return NextResponse.json(
+        { error: 'Cloudinary rate limit reached. Please wait and retry.', code: 'RATE_LIMIT' },
+        { status: 429 }
+      );
+    }
+    if (http && http >= 500) {
+      return NextResponse.json(
+        { error: 'Cloudinary upstream error. Please retry.', code: 'UPSTREAM' },
+        { status: 502 }
+      );
+    }
     return NextResponse.json(
-      { error: 'Upload failed due to an unexpected server error.', code: 'UNEXPECTED', http_code: err?.http_code ?? 500 },
+      { error: 'Upload failed due to an unexpected server error.', code: 'UNEXPECTED', http_code: http ?? 500 },
       { status: 500 }
     );
   }
