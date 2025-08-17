@@ -73,6 +73,9 @@ export async function POST(req: NextRequest) {
       console.log('[UPLOAD_DEBUG] File validation failed:', { file, isFile: file instanceof File });
       return NextResponse.json({ error: 'No file provided' }, { status: 400 });
     }
+    if (file.size === 0) {
+      return NextResponse.json({ error: 'Empty file upload' }, { status: 400 });
+    }
 
     if (file.size > MAX_FILE_SIZE) {
       return NextResponse.json(
@@ -87,6 +90,11 @@ export async function POST(req: NextRequest) {
 
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
+
+    // Basic Cloudinary configuration validation
+    if (!process.env.CLOUDINARY_CLOUD_NAME || !process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET) {
+      return NextResponse.json({ error: 'Cloudinary not configured' }, { status: 500 });
+    }
 
     const res: any = await new Promise((resolve, reject) => {
       const stream = cloudinary.uploader.upload_stream(
