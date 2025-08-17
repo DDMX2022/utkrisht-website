@@ -96,24 +96,55 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const arrayBuffer = await file.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
+  const arrayBuffer = await file.arrayBuffer();
+  const buffer = Buffer.from(arrayBuffer);
 
     // Basic Cloudinary configuration validation
     if (!process.env.CLOUDINARY_CLOUD_NAME || !process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET) {
       return NextResponse.json({ error: 'Cloudinary not configured' }, { status: 500 });
     }
 
-    const res: any = await new Promise((resolve, reject) => {
-      const stream = cloudinary.uploader.upload_stream(
-    { folder, resource_type: 'image' },
-        (err, result) => {
-          if (err) return reject(err);
-          resolve(result);
-        }
+    // Upload with retry on transient upstream/network errors
+    const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+    const shouldRetry = (e: any) => {
+      const http = e?.http_code ?? e?.statusCode ?? e?.status ?? e?.error?.http_code;
+      const msg = (e?.message || e?.error?.message || '').toString();
+      return (
+        http >= 500 ||
+        e?.code === 'ECONNRESET' ||
+        e?.code === 'ETIMEDOUT' ||
+        e?.code === 'EAI_AGAIN' ||
+        /upstream|temporarily unavailable|server error|timeout/i.test(msg)
       );
-      stream.end(buffer);
-    });
+    };
+    const uploadOnce = () =>
+      new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+          { folder, resource_type: 'image', timeout: 60000 },
+          (err, result) => {
+            if (err) return reject(err);
+            resolve(result as any);
+          }
+        );
+        stream.end(buffer);
+      });
+
+    let res: any;
+    let lastErr: any;
+    for (let attempt = 1; attempt <= 3; attempt++) {
+      try {
+        res = await uploadOnce();
+        lastErr = undefined;
+        break;
+      } catch (e: any) {
+        lastErr = e;
+        if (attempt < 3 && shouldRetry(e)) {
+          await sleep(300 * attempt * attempt); // backoff: 300ms, 1200ms
+          continue;
+        }
+        throw e;
+      }
+    }
 
     let media;
     try {
