@@ -191,7 +191,7 @@ export async function POST(req: NextRequest) {
     });
     if (err?.http_code === 400 && /File size too large/i.test(err.message)) {
       return NextResponse.json(
-        { error: 'Cloudinary: file too large (limit 10MB on free plan)' },
+        { error: 'Cloudinary: file too large (limit 10MB on free plan)', code: 'FILE_TOO_LARGE' },
         { status: 413 }
       );
     }
@@ -200,6 +200,7 @@ export async function POST(req: NextRequest) {
         {
           error:
             'DNS error reaching api.cloudinary.com. Check internet/VPN/DNS and retry.',
+          code: 'DNS',
         },
         { status: 502 }
       );
@@ -208,24 +209,24 @@ export async function POST(req: NextRequest) {
     }
     if (isAuthError) {
       return NextResponse.json(
-        { error: 'Upload failed: Cloudinary credentials rejected. Verify CLOUDINARY_* env vars.' },
+        { error: 'Upload failed: Cloudinary credentials rejected. Verify CLOUDINARY_* env vars.', code: 'CLOUDINARY_AUTH' },
         { status: 500 }
       );
     }
     if (err?.http_code === 400 && /Invalid image file|Unsupported image format/i.test(err?.message || '')) {
       return NextResponse.json(
-        { error: 'Invalid or unsupported image file.' },
+        { error: 'Invalid or unsupported image file.', code: 'BAD_IMAGE' },
         { status: 400 }
       );
     }
     if (err?.http_code === 499 || /timeout/i.test(err?.message || '')) {
       return NextResponse.json(
-        { error: 'Upload timed out. Please retry.' },
+        { error: 'Upload timed out. Please retry.', code: 'TIMEOUT' },
         { status: 504 }
       );
     }
     return NextResponse.json(
-      { error: 'Upload failed due to an unexpected server error.' },
+      { error: 'Upload failed due to an unexpected server error.', code: 'UNEXPECTED', http_code: err?.http_code ?? 500 },
       { status: 500 }
     );
   }
