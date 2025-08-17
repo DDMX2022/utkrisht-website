@@ -4,6 +4,10 @@ import { requireAdmin, unauthorized } from '@/lib/admin';
 import { cloudinary } from '@/lib/cloudinary';
 import { db } from '@/lib/db';
 
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+export const maxDuration = 60;
+
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
 function slugify(input: string) {

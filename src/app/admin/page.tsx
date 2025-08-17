@@ -25,9 +25,13 @@ import { signOut, useSession } from 'next-auth/react';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export default function AdminDashboard() {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const [mounted, setMounted] = useState(false);
   const [activeTab, setActiveTab] = useState('projects'); // default to projects now
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [passwordForm, setPasswordForm] = useState({
@@ -39,23 +43,24 @@ export default function AdminDashboard() {
   const [savingPwd, setSavingPwd] = useState(false);
   const [pwdMsg, setPwdMsg] = useState<string | null>(null);
 
+  // prevent SSR flash
+  useEffect(() => setMounted(true), []);
+
   // Authentication check
   useEffect(() => {
-    if (status === 'loading') return; // Still loading
-
+    if (!mounted) return;
     if (status === 'unauthenticated') {
-      router.push('/login');
+      router.replace('/login');
       return;
     }
-
-    if (session?.user && !(session.user as any)?.role?.match(/^(ADMIN|SUPERADMIN)$/)) {
-      router.push('/login');
-      return;
+    const role = (session?.user as any)?.role;
+    if (status === 'authenticated' && !(role === 'ADMIN' || role === 'SUPERADMIN')) {
+      router.replace('/login');
     }
-  }, [session, status, router]);
+  }, [mounted, session, status, router]);
 
   // Show loading state while checking authentication
-  if (status === 'loading') {
+  if (!mounted || status === 'loading') {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-lg">Loading...</div>
@@ -64,7 +69,7 @@ export default function AdminDashboard() {
   }
 
   // Show nothing if not authenticated (will redirect)
-  if (status === 'unauthenticated' || !session?.user || !(session.user as any)?.role?.match(/^(ADMIN|SUPERADMIN)$/)) {
+  if (status !== 'authenticated' || !session?.user || !['ADMIN', 'SUPERADMIN'].includes((session.user as any)?.role)) {
     return null;
   }
 
