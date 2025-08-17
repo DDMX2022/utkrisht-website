@@ -104,9 +104,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Cloudinary not configured' }, { status: 500 });
     }
 
-    const res: any = await new Promise((resolve, reject) => {
+  const res: any = await new Promise((resolve, reject) => {
       const stream = cloudinary.uploader.upload_stream(
-        { folder },
+    { folder, resource_type: 'image' },
         (err, result) => {
           if (err) return reject(err);
           resolve(result);
@@ -210,6 +210,18 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(
         { error: 'Upload failed: Cloudinary credentials rejected. Verify CLOUDINARY_* env vars.' },
         { status: 500 }
+      );
+    }
+    if (err?.http_code === 400 && /Invalid image file|Unsupported image format/i.test(err?.message || '')) {
+      return NextResponse.json(
+        { error: 'Invalid or unsupported image file.' },
+        { status: 400 }
+      );
+    }
+    if (err?.http_code === 499 || /timeout/i.test(err?.message || '')) {
+      return NextResponse.json(
+        { error: 'Upload timed out. Please retry.' },
+        { status: 504 }
       );
     }
     return NextResponse.json(
