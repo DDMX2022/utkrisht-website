@@ -43,19 +43,6 @@ export async function POST(req: NextRequest) {
     const formData = await req.formData();
     console.log('[UPLOAD_DEBUG] FormData keys:', Array.from(formData.keys()));
     
-    // Log all form data entries (safely)
-    for (const [key, value] of formData.entries()) {
-      if (value instanceof File) {
-        console.log(`[UPLOAD_DEBUG] FormData[${key}]:`, {
-          name: value.name,
-          size: value.size,
-          type: value.type,
-          lastModified: value.lastModified,
-        });
-      } else {
-        console.log(`[UPLOAD_DEBUG] FormData[${key}]:`, value);
-      }
-    }
     const file = formData.get('file');
     const title = formData.get('title') as string | null;
     const category = (formData.get('category') as string | null) || null;
