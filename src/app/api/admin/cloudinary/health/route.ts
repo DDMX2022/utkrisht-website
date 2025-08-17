@@ -16,6 +16,16 @@ export async function GET(req: NextRequest) {
     const tCloud = envCloud.trim();
     const tKey = envKey.trim();
     const tSecret = envSecret.trim();
+    console.info('[CLOUDINARY_ENV_HEALTH]', {
+      cloudName_last4: tCloud ? tCloud.slice(-4) : null,
+      apiKey_last4: tKey ? tKey.slice(-4) : null,
+      haveSecret: Boolean(tSecret),
+      hadWhitespace: {
+        cloudName: tCloud !== envCloud,
+        apiKey: tKey !== envKey,
+        apiSecret: tSecret !== envSecret,
+      },
+    });
 
     // Simple credentials check without uploading a file
     // cloudinary.api.ping() should return { status: 'ok' } when creds are valid

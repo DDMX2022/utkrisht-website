@@ -100,6 +100,23 @@ export async function POST(req: NextRequest) {
   const buffer = Buffer.from(arrayBuffer);
 
     // Basic Cloudinary configuration validation
+    const envCloud = process.env.CLOUDINARY_CLOUD_NAME || '';
+    const envKey = process.env.CLOUDINARY_API_KEY || '';
+    const envSecret = process.env.CLOUDINARY_API_SECRET || '';
+    const tCloud = envCloud.trim();
+    const tKey = envKey.trim();
+    const tSecret = envSecret.trim();
+    // Masked debug log for production diagnostics
+    console.info('[CLOUDINARY_ENV]', {
+      cloudName_last4: tCloud ? tCloud.slice(-4) : null,
+      apiKey_last4: tKey ? tKey.slice(-4) : null,
+      haveSecret: Boolean(tSecret),
+      hadWhitespace: {
+        cloudName: tCloud !== envCloud,
+        apiKey: tKey !== envKey,
+        apiSecret: tSecret !== envSecret,
+      },
+    });
     if (!process.env.CLOUDINARY_CLOUD_NAME || !process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET) {
       return NextResponse.json({ error: 'Cloudinary not configured' }, { status: 500 });
     }

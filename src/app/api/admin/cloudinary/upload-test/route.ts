@@ -14,9 +14,22 @@ export async function GET(req: NextRequest) {
   if (!admin) return unauthorized();
 
   try {
-    const cloud = process.env.CLOUDINARY_CLOUD_NAME?.trim();
-    const key = process.env.CLOUDINARY_API_KEY?.trim();
-    const sec = process.env.CLOUDINARY_API_SECRET?.trim();
+    const rawCloud = process.env.CLOUDINARY_CLOUD_NAME || '';
+    const rawKey = process.env.CLOUDINARY_API_KEY || '';
+    const rawSec = process.env.CLOUDINARY_API_SECRET || '';
+    const cloud = rawCloud.trim();
+    const key = rawKey.trim();
+    const sec = rawSec.trim();
+    console.info('[CLOUDINARY_ENV_TEST]', {
+      cloudName_last4: cloud ? cloud.slice(-4) : null,
+      apiKey_last4: key ? key.slice(-4) : null,
+      haveSecret: Boolean(sec),
+      hadWhitespace: {
+        cloudName: cloud !== rawCloud,
+        apiKey: key !== rawKey,
+        apiSecret: sec !== rawSec,
+      },
+    });
     if (!cloud || !key || !sec) {
       return NextResponse.json(
         { ok: false, error: 'Cloudinary not configured', code: 'CONFIG' },
