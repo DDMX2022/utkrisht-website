@@ -24,6 +24,14 @@ export async function POST(req: NextRequest) {
   if (!admin) return unauthorized();
 
   try {
+    const contentType = req.headers.get('content-type') || '';
+    if (!contentType.toLowerCase().includes('multipart/form-data')) {
+      return NextResponse.json(
+        { error: 'Unsupported content-type. Use multipart/form-data and -F to send a real file.' },
+        { status: 415 }
+      );
+    }
+
     const formData = await req.formData();
     const file = formData.get('file');
     const title = formData.get('title') as string | null;
@@ -172,12 +180,14 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(media, { status: 201 });
   } catch (err: any) {
-    console.error('[UPLOAD_ERROR] Full error details:', {
-      message: err?.message,
+    // Cloudinary sometimes includes request echo in error.message when auth fails; do not log raw message
+    const isAuthError =
+      typeof err?.message === 'string' && /invalid\s*api_key|api\s*key\s*invalid/i.test(err.message);
+    console.error('[UPLOAD_ERROR] Summary:', {
       code: err?.code,
       http_code: err?.http_code,
-      stack: err?.stack?.split('\n').slice(0, 5),
-      cloudinaryError: err?.error,
+      kind: isAuthError ? 'CLOUDINARY_AUTH' : 'GENERIC',
+      stack: err?.stack ? String(err.stack).split('\n').slice(0, 3) : undefined,
     });
     if (err?.http_code === 400 && /File size too large/i.test(err.message)) {
       return NextResponse.json(
@@ -196,7 +206,15 @@ export async function POST(req: NextRequest) {
       res.headers.set('Retry-After', '10');
       return res;
     }
-    console.error('[UPLOAD_ERROR]', err);
-    return NextResponse.json({ error: `Upload failed: ${err?.message || 'Unknown error'}` }, { status: 500 });
+    if (isAuthError) {
+      return NextResponse.json(
+        { error: 'Upload failed: Cloudinary credentials rejected. Verify CLOUDINARY_* env vars.' },
+        { status: 500 }
+      );
+    }
+    return NextResponse.json(
+      { error: 'Upload failed due to an unexpected server error.' },
+      { status: 500 }
+    );
   }
 }
