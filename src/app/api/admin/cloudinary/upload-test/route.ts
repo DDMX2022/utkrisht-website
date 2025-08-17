@@ -38,7 +38,29 @@ export async function GET(req: NextRequest) {
         stream.end(buffer);
       });
 
-    const res = await uploadOnce();
+    const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+    const shouldRetry = (e: any) => {
+      const http = e?.http_code ?? e?.statusCode ?? e?.status ?? e?.error?.http_code;
+      const msg = (e?.message || e?.error?.message || '').toString();
+      return http >= 500 || ['ECONNRESET', 'ETIMEDOUT', 'EAI_AGAIN'].includes(e?.code) || /upstream|server error|timeout/i.test(msg);
+    };
+
+    let res: any;
+    let lastErr: any;
+    for (let attempt = 1; attempt <= 3; attempt++) {
+      try {
+        res = await uploadOnce();
+        lastErr = undefined;
+        break;
+      } catch (e: any) {
+        lastErr = e;
+        if (attempt < 3 && shouldRetry(e)) {
+          await sleep(400 * attempt * attempt); // 400ms, 1600ms
+          continue;
+        }
+        throw e;
+      }
+    }
 
     // Best-effort cleanup
     try {
