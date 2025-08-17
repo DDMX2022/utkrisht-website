@@ -24,7 +24,15 @@ export async function POST(req: NextRequest) {
   if (!admin) return unauthorized();
 
   try {
+    console.log('[UPLOAD_DEBUG] Request details:', {
+      method: req.method,
+      url: req.url,
+      headers: Object.fromEntries(req.headers.entries()),
+    });
+
     const contentType = req.headers.get('content-type') || '';
+    console.log('[UPLOAD_DEBUG] Content-Type:', contentType);
+    
     if (!contentType.toLowerCase().includes('multipart/form-data')) {
       return NextResponse.json(
         { error: 'Unsupported content-type. Use multipart/form-data and -F to send a real file.' },
@@ -33,6 +41,21 @@ export async function POST(req: NextRequest) {
     }
 
     const formData = await req.formData();
+    console.log('[UPLOAD_DEBUG] FormData keys:', Array.from(formData.keys()));
+    
+    // Log all form data entries (safely)
+    for (const [key, value] of formData.entries()) {
+      if (value instanceof File) {
+        console.log(`[UPLOAD_DEBUG] FormData[${key}]:`, {
+          name: value.name,
+          size: value.size,
+          type: value.type,
+          lastModified: value.lastModified,
+        });
+      } else {
+        console.log(`[UPLOAD_DEBUG] FormData[${key}]:`, value);
+      }
+    }
     const file = formData.get('file');
     const title = formData.get('title') as string | null;
     const category = (formData.get('category') as string | null) || null;
@@ -85,6 +108,22 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Empty file upload', code: 'EMPTY_FILE' }, { status: 400 });
     }
 
+    // Log detailed file and payload info
+    console.log('[UPLOAD_DEBUG] File details:', {
+      name: file.name,
+      size: file.size,
+      type: file.type,
+      lastModified: file.lastModified,
+    });
+    console.log('[UPLOAD_DEBUG] Form data received:', {
+      title,
+      category,
+      projectId,
+      portfolioId,
+      folder: folder,
+      contentType: req.headers.get('content-type')?.slice(0, 100),
+    });
+
     if (file.size > MAX_FILE_SIZE) {
       return NextResponse.json(
         {
@@ -136,10 +175,33 @@ export async function POST(req: NextRequest) {
     };
     const uploadOnce = () =>
       new Promise((resolve, reject) => {
+        console.log('[CLOUDINARY_DEBUG] Upload attempt:', {
+          cloudName: process.env.CLOUDINARY_CLOUD_NAME?.trim(),
+          apiUrl: `https://api.cloudinary.com/v1_1/${process.env.CLOUDINARY_CLOUD_NAME?.trim()}/image/upload`,
+          folder,
+          fileSize: buffer.length,
+          resourceType: 'image',
+          timeout: 60000,
+        });
         const stream = cloudinary.uploader.upload_stream(
           { folder, resource_type: 'image', timeout: 60000 },
           (err, result) => {
-            if (err) return reject(err);
+            if (err) {
+              console.error('[CLOUDINARY_DEBUG] Upload stream error:', {
+                name: err.name,
+                message: err.message?.slice(0, 200),
+                http_code: err.http_code,
+                error: err.error ? JSON.stringify(err.error).slice(0, 200) : undefined,
+              });
+              return reject(err);
+            }
+            console.log('[CLOUDINARY_DEBUG] Upload success:', {
+              public_id: result?.public_id,
+              secure_url: result?.secure_url,
+              width: result?.width,
+              height: result?.height,
+              bytes: result?.bytes,
+            });
             resolve(result as any);
           }
         );
