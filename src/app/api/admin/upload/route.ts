@@ -79,10 +79,10 @@ export async function POST(req: NextRequest) {
 
     if (!file || !(file instanceof File)) {
       console.log('[UPLOAD_DEBUG] File validation failed:', { file, isFile: file instanceof File });
-      return NextResponse.json({ error: 'No file provided' }, { status: 400 });
+      return NextResponse.json({ error: 'No file provided', code: 'NO_FILE' }, { status: 400 });
     }
     if (file.size === 0) {
-      return NextResponse.json({ error: 'Empty file upload' }, { status: 400 });
+      return NextResponse.json({ error: 'Empty file upload', code: 'EMPTY_FILE' }, { status: 400 });
     }
 
     if (file.size > MAX_FILE_SIZE) {
@@ -104,7 +104,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Cloudinary not configured' }, { status: 500 });
     }
 
-  const res: any = await new Promise((resolve, reject) => {
+    const res: any = await new Promise((resolve, reject) => {
       const stream = cloudinary.uploader.upload_stream(
     { folder, resource_type: 'image' },
         (err, result) => {
@@ -115,20 +115,30 @@ export async function POST(req: NextRequest) {
       stream.end(buffer);
     });
 
-    const media = await db.media.create({
-      data: {
-        publicId: res.public_id,
-        url: res.secure_url,
-        width: res.width,
-        height: res.height,
-        format: res.format,
-        resourceType: res.resource_type,
-        folder: folder,
-        bytes: res.bytes,
-        title: title || null,
-        category: category || null,
-      },
-    });
+    let media;
+    try {
+      media = await db.media.create({
+        data: {
+          publicId: res.public_id,
+          url: res.secure_url,
+          width: res.width,
+          height: res.height,
+          format: res.format,
+          resourceType: res.resource_type,
+          folder: folder,
+          bytes: res.bytes,
+          title: title || null,
+          category: category || null,
+        },
+      });
+    } catch (dbErr) {
+      // Try to clean up the uploaded asset if DB save fails
+      try { await cloudinary.uploader.destroy(res.public_id); } catch {}
+      return NextResponse.json(
+        { error: 'Failed to save media metadata.', code: 'DB_ERROR' },
+        { status: 500 }
+      );
+    }
 
     // Attach to Project or Portfolio if provided
     if (projectId) {
@@ -181,7 +191,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(media, { status: 201 });
   } catch (err: any) {
     // Normalize Cloudinary error shape
-    const http = err?.http_code ?? err?.statusCode ?? err?.status ?? err?.error?.http_code;
+  const http = err?.http_code ?? err?.statusCode ?? err?.status ?? err?.error?.http_code;
     const msg = (err?.message || err?.error?.message || '').toString();
     // Cloudinary sometimes includes request echo in error.message when auth fails; do not log raw message
     const isAuthError =
@@ -198,12 +208,11 @@ export async function POST(req: NextRequest) {
         { status: 413 }
       );
     }
-    if (err?.code === 'ENOTFOUND') {
+  if (err?.code === 'ENOTFOUND' || err?.code === 'ECONNRESET' || err?.code === 'ETIMEDOUT' || err?.code === 'EAI_AGAIN') {
       const res = NextResponse.json(
         {
-          error:
-            'DNS error reaching api.cloudinary.com. Check internet/VPN/DNS and retry.',
-          code: 'DNS',
+      error: 'Network error reaching Cloudinary. Check internet/VPN/DNS and retry.',
+      code: 'NETWORK',
         },
         { status: 502 }
       );
