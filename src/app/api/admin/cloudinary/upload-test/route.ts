@@ -60,15 +60,18 @@ export async function GET(req: NextRequest) {
 
     let res: any;
     let lastErr: any;
-    for (let attempt = 1; attempt <= 3; attempt++) {
+    for (let attempt = 1; attempt <= 5; attempt++) {
       try {
         res = await uploadOnce();
         lastErr = undefined;
         break;
       } catch (e: any) {
         lastErr = e;
-        if (attempt < 3 && shouldRetry(e)) {
-          await sleep(400 * attempt * attempt); // 400ms, 1600ms
+        if (attempt < 5 && shouldRetry(e)) {
+          // Exponential backoff with jitter: 500ms, 1500ms, 3500ms, 7500ms
+          const baseDelay = 500 * Math.pow(2, attempt - 1);
+          const jitter = Math.random() * 200;
+          await sleep(baseDelay + jitter);
           continue;
         }
         throw e;

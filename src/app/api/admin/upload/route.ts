@@ -148,15 +148,18 @@ export async function POST(req: NextRequest) {
 
     let res: any;
     let lastErr: any;
-    for (let attempt = 1; attempt <= 3; attempt++) {
+    for (let attempt = 1; attempt <= 5; attempt++) {
       try {
         res = await uploadOnce();
         lastErr = undefined;
         break;
       } catch (e: any) {
         lastErr = e;
-        if (attempt < 3 && shouldRetry(e)) {
-          await sleep(300 * attempt * attempt); // backoff: 300ms, 1200ms
+        if (attempt < 5 && shouldRetry(e)) {
+          // Exponential backoff with jitter: 500ms, 1500ms, 3500ms, 7500ms
+          const baseDelay = 500 * Math.pow(2, attempt - 1);
+          const jitter = Math.random() * 200;
+          await sleep(baseDelay + jitter);
           continue;
         }
         throw e;
@@ -244,6 +247,39 @@ export async function POST(req: NextRequest) {
     // Cloudinary sometimes includes request echo in error.message when auth fails; do not log raw message
     const isAuthError =
       http === 401 || http === 403 || /invalid\s*(api[_\s-]?key|signature|credentials)/i.test(msg);
+    // Sanitize message to avoid leaking secrets or echoed payload
+    const envKey = process.env.CLOUDINARY_API_KEY?.trim();
+    const envSecret = process.env.CLOUDINARY_API_SECRET?.trim();
+    const sanitize = (s: string) => {
+      let out = s;
+      const rAll = (str: string, find: string, rep: string) => (find ? str.split(find).join(rep) : str);
+      if (envKey) out = rAll(out, envKey, '***');
+      if (envSecret) out = rAll(out, envSecret, '***');
+      // Mask long digit/word tokens (e.g., api_key numbers, signatures)
+      out = out.replace(/([A-Za-z0-9\/+_=]{10,})/g, '***');
+      // Trim to a reasonable length
+      if (out.length > 300) out = out.slice(0, 300) + '…';
+      return out;
+    };
+    const hint =
+      isAuthError
+        ? 'CLOUDINARY_AUTH'
+        : (http && http >= 500)
+        ? 'UPSTREAM'
+        : err?.code === 'ENOTFOUND' || err?.code === 'ECONNRESET' || err?.code === 'ETIMEDOUT' || err?.code === 'EAI_AGAIN'
+        ? 'NETWORK'
+        : /timeout/i.test(msg)
+        ? 'TIMEOUT'
+        : /rate\s*limit/i.test(msg) || http === 429
+        ? 'RATE_LIMIT'
+        : 'UNEXPECTED';
+    console.error('[UPLOAD_ERROR_DETAIL]', {
+      http_code: http,
+      code: err?.code,
+      name: err?.name,
+      kind: hint,
+      message: sanitize(msg),
+    });
     console.error('[UPLOAD_ERROR] Summary:', {
       code: err?.code,
       http_code: http,
