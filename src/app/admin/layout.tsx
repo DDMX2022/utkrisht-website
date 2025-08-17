@@ -3,6 +3,8 @@ export const metadata = {
   description: 'Admin panel for managing the interior design website',
 };
 
+export const dynamic = 'force-dynamic';
+
 // Added required default layout component
 export default function AdminLayout({
   children,
