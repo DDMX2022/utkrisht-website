@@ -37,7 +37,7 @@ export default function AboutUs() {
         const res = await fetch('/api/about?limit=1', { cache: 'no-store' });
         if (!res.ok) return;
         const list = await res.json();
-        if (Array.isArray(list) && list.length > 0) setAboutImg(list[0].url);
+        if (Array.isArray(list) && list.length > 0) setAboutImg("https://res.cloudinary.com/dsvz8fu0u/image/upload/v1762001168/About_us_gbseug.jpg");
       } catch (err) {
         console.error('Failed to load About image', err);
       } finally {
@@ -45,18 +45,18 @@ export default function AboutUs() {
       }
     })();
   }, []);
-
+const AboutImg = "https://res.cloudinary.com/dsvz8fu0u/image/upload/v1762001168/About_us_gbseug.jpg";
   return (
     <section id='about' ref={sectionRef} className='py-20 bg-white'>
       <div className='container mx-auto px-4 sm:px-6 lg:px-8'>
         <div className='grid grid-cols-1 lg:grid-cols-2 gap-12 items-center'>
           <div className='fade-in-element opacity-0'>
             <img
-              src={aboutImg || '/placeholder.svg?height=600&width=800'}
+              src={AboutImg || '/placeholder.svg?height=600&width=800'}
               alt='About Utkrisht Interiors'
               className='rounded-lg shadow-xl'
             />
-            {!aboutImg && !loading && (
+            {!AboutImg && !loading && (
               <p className='mt-2 text-sm text-gray-500'>
                 Upload an About image from the admin panel.
               </p>

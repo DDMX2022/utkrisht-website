@@ -16,15 +16,15 @@ export default function Hero() {
 
   const fallbackSlides = [
     {
-      image: '/placeholder.svg?height=800&width=1200',
+      image: 'https://res.cloudinary.com/dsvz8fu0u/image/upload/v1762001419/Vastu_Consultancy_xlt63e.jpg',
       title: 'Transforming Spaces, Elevating Lifestyles',
     },
     {
-      image: '/placeholder.svg?height=800&width=1200',
+      image: 'https://res.cloudinary.com/dsvz8fu0u/image/upload/v1762001418/Exterior_Design_l6y2gw.jpg',
       title: 'Innovative Design Solutions',
     },
     {
-      image: '/placeholder.svg?height=800&width=1200',
+      image: 'https://res.cloudinary.com/dsvz8fu0u/image/upload/v1762001535/Int._Desg_yadfry.jpg',
       title: 'Vastu-Compliant Interiors',
     },
   ];

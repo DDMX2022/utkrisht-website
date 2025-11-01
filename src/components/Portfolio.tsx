@@ -18,11 +18,178 @@ const categories = [
   'Living Room',
   'Bedroom',
   'Kitchen',
-  'Office',
-  'Dining Room',
-  'Bathroom',
+  'Commercial',
+  // 'Dining Room',
+  // 'Bathroom',
 ];
 
+const portfolioData: PortfolioItem[] = [
+{
+  id: '1',
+  title: 'Cozy Minimalist Living Room',
+  category: 'Living Room',
+  description: 'A warm and inviting minimalist living room styled with soft neutral tones, plush seating, and organic textures for a calm atmosphere.',
+  imageUrl: 'https://res.cloudinary.com/dsvz8fu0u/image/upload/v1762001985/pexels-vika-glitter-392079-1648768_c7mtfl.jpg',
+},
+{
+  id: '2',
+  title: 'Modern Luxury Living Room',
+  category: 'Living Room',
+  description: 'An elegant living room featuring contemporary furniture, statement lighting, and a balanced blend of comfort and sophistication.',
+  imageUrl: 'https://res.cloudinary.com/dsvz8fu0u/image/upload/v1762001984/pexels-houzlook-3797991_nrnff3.jpg',
+},
+{
+  id: '3',
+  title: 'Serene Natural Living Space',
+  category: 'Living Room',
+  description: 'A tranquil living area with earthy hues, soft fabrics, and abundant natural light that creates a relaxed and peaceful setting.',
+  imageUrl: 'https://res.cloudinary.com/dsvz8fu0u/image/upload/v1762001983/pexels-fotoaibe-1571471_cj7yl5.jpg',
+},
+{
+  id: '4',
+  title: 'Contemporary Living Elegance',
+  category: 'Living Room',
+  description: 'A refined living room design that pairs modern furniture with artistic décor and cozy lighting for everyday sophistication.',
+  imageUrl: 'https://res.cloudinary.com/dsvz8fu0u/image/upload/v1762001983/pexels-fotoaibe-1571459_dykcja.jpg',
+},
+{
+  id: '6',
+  title: 'Compact Urban Living Room',
+  category: 'Living Room',
+  description: 'A space-efficient living room designed for modern apartments, featuring multifunctional furniture and smart layout optimization.',
+  imageUrl: 'https://res.cloudinary.com/dsvz8fu0u/image/upload/v1762001982/pexels-fotoaibe-1571453_rgyvgc.jpg',
+},
+
+{
+  id: '7',
+  title: 'Modern Modular Kitchen',
+  category: 'Kitchen',
+  description: 'A sleek modular kitchen featuring matte cabinets, clean lines, and modern appliances for efficient cooking.',
+  imageUrl: 'https://res.cloudinary.com/dsvz8fu0u/image/upload/v1762002580/pexels-asphotograpy-94865_oipyoz.jpg',
+},
+{
+  id: '8',
+  title: 'Sunlit Contemporary Kitchen',
+  category: 'Kitchen',
+  description: 'Bright and airy kitchen with natural light, elegant countertops, and minimalist décor for an inviting cooking space.',
+  imageUrl: 'https://res.cloudinary.com/dsvz8fu0u/image/upload/v1762002580/pexels-pixabay-279648_igvit6.jpg',
+},
+{
+  id: '9',
+  title: 'Elegant Open Kitchen',
+  category: 'Kitchen',
+  description: 'An open-plan kitchen seamlessly connected to the dining area, designed with marble surfaces and ambient lighting.',
+  imageUrl: 'https://res.cloudinary.com/dsvz8fu0u/image/upload/v1762002579/pexels-hakimsatoso-3634740_h5lhgj.jpg',
+},
+{
+  id: '10',
+  title: 'Rustic Wooden Kitchen',
+  category: 'Kitchen',
+  description: 'A cozy rustic kitchen with reclaimed wood accents, vintage textures, and a warm earthy color palette.',
+  imageUrl: 'https://res.cloudinary.com/dsvz8fu0u/image/upload/v1762002579/pexels-alex-qian-1180283-2343467_izthu3.jpg',
+},
+{
+  id: '11',
+  title: 'Luxury Chef’s Kitchen',
+  category: 'Kitchen',
+  description: 'A high-end kitchen space featuring premium finishes, stone countertops, and modern lighting for gourmet cooking.',
+  imageUrl: 'https://res.cloudinary.com/dsvz8fu0u/image/upload/v1762002578/pexels-arina-krasnikova-6654105_hpgxyy.jpg',
+},
+
+  {
+  id: '13',
+  title: 'Modern Office Lobby',
+  category: 'Commercial',
+  description: 'A sleek corporate lobby with polished finishes, warm lighting, and a welcoming ambiance for clients and guests.',
+  imageUrl: 'https://res.cloudinary.com/dsvz8fu0u/image/upload/v1762002913/pexels-pixabay-263209_b5tydq.jpg',
+},
+{
+  id: '14',
+  title: 'Contemporary Café Interior',
+  category: 'Commercial',
+  description: 'A vibrant café space featuring wooden textures, open seating, and cozy lighting for a relaxed social atmosphere.',
+  imageUrl: 'https://res.cloudinary.com/dsvz8fu0u/image/upload/v1762002911/pexels-marta-dzedyshko-1042863-9785778_s0atgz.jpg',
+},
+{
+  id: '15',
+  title: 'Retail Showroom Design',
+  category: 'Commercial',
+  description: 'A bright, spacious showroom layout emphasizing product display and seamless customer flow with elegant design elements.',
+  imageUrl: 'https://res.cloudinary.com/dsvz8fu0u/image/upload/v1762002912/pexels-pixabay-236730_bnx9rs.jpg',
+},
+{
+  id: '16',
+  title: 'Executive Conference Room',
+  category: 'Commercial',
+  description: 'A modern boardroom designed for productivity and collaboration, featuring ergonomic furniture and acoustic paneling.',
+  imageUrl: 'https://res.cloudinary.com/dsvz8fu0u/image/upload/v1762002911/pexels-mikhail-nilov-9300731_aurymy.jpg',
+},
+{
+  id: '17',
+  title: 'High-End Restaurant Interior',
+  category: 'Commercial',
+  description: 'An elegant fine-dining environment blending ambient lighting, textured walls, and premium furniture for an upscale experience.',
+  imageUrl: 'https://res.cloudinary.com/dsvz8fu0u/image/upload/v1762002910/pexels-kseniachernaya-8535622_jueu3a.jpg',
+},
+{
+  id: '18',
+  title: 'Industrial Workspace Loft',
+  category: 'Commercial',
+  description: 'A creative open workspace with exposed brick, steel elements, and collaborative zones inspired by industrial aesthetics.',
+  imageUrl: 'https://res.cloudinary.com/dsvz8fu0u/image/upload/v1762002910/pexels-atbo-66986-245240_et6wes.jpg',
+},
+{
+  id: '19',
+  title: 'Modern Minimalist Bedroom',
+  category: 'Bedroom',
+  description: 'A serene minimalist bedroom with soft lighting, neutral colors, and sleek furniture for a peaceful retreat.',
+  imageUrl: 'https://res.cloudinary.com/dsvz8fu0u/image/upload/v1762003184/pexels-pixabay-279746_ptddpv.jpg',
+},
+{
+  id: '20',
+  title: 'Classic Wooden Bedroom',
+  category: 'Bedroom',
+  description: 'A timeless bedroom featuring natural wood textures, cozy fabrics, and warm tones for an inviting atmosphere.',
+  imageUrl: 'https://res.cloudinary.com/dsvz8fu0u/image/upload/v1762003182/pexels-pixabay-271624_yjqase.jpg',
+},
+{
+  id: '21',
+  title: 'Luxury Master Suite',
+  category: 'Bedroom',
+  description: 'An opulent master bedroom showcasing premium materials, accent lighting, and a sophisticated design aesthetic.',
+  imageUrl: 'https://res.cloudinary.com/dsvz8fu0u/image/upload/v1762003181/pexels-marywhitneyph-90317_jsufk8.jpg',
+},
+{
+  id: '22',
+  title: 'Coastal Chic Bedroom',
+  category: 'Bedroom',
+  description: 'A bright and airy coastal-style bedroom with whitewashed tones, ocean-inspired décor, and natural fabrics.',
+  imageUrl: 'https://res.cloudinary.com/dsvz8fu0u/image/upload/v1762003180/pexels-marywhitneyph-90319_ekbajp.jpg',
+},
+{
+  id: '23',
+  title: 'Urban Apartment Bedroom',
+  category: 'Bedroom',
+  description: 'A contemporary bedroom with a compact layout, modern finishes, and clever storage for city living.',
+  imageUrl: 'https://res.cloudinary.com/dsvz8fu0u/image/upload/v1762003179/pexels-lisa-anna-901356985-19899055_tcfcpi.jpg',
+},
+{
+  id: '24',
+  title: 'Bohemian Style Bedroom',
+  category: 'Bedroom',
+  description: 'An artistic bedroom full of character, layered textiles, greenery, and handcrafted décor elements.',
+  imageUrl: 'https://res.cloudinary.com/dsvz8fu0u/image/upload/v1762003178/pexels-lisa-anna-901356985-19866405_hcnsiw.jpg',
+},
+{
+  id: '25',
+  title: 'Scandinavian Comfort Bedroom',
+  category: 'Bedroom',
+  description: 'A cozy Nordic-inspired bedroom featuring light wood finishes, neutral hues, and minimalist design for calm living.',
+  imageUrl: 'https://res.cloudinary.com/dsvz8fu0u/image/upload/v1762003177/pexels-l-ng-studio-3030613-16648029_flnir8.jpg',
+},
+
+
+];
 export default function Portfolio() {
   const [activeCategory, setActiveCategory] = useState('All');
   const [items, setItems] = useState<PortfolioItem[]>([]);
@@ -42,7 +209,13 @@ export default function Portfolio() {
       const res = await fetch(`/api/portfolio${qs}`, { cache: 'no-store' });
       if (!res.ok) throw new Error('Failed to load portfolio');
       const data: PortfolioItem[] = await res.json();
-      setItems(data);
+      const filtered =
+  category && category !== 'All'
+    ? portfolioData.filter((item) => item.category === category)
+    : portfolioData;
+
+setItems(filtered);
+
     } catch (e: any) {
       setError(e?.message || 'Error loading');
     } finally {

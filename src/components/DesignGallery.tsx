@@ -11,6 +11,155 @@ interface MediaItem {
   title?: string | null;
   folder?: string | null;
 }
+export const galleryData: MediaItem[] = [
+  {
+    id: '1',
+    url: 'https://res.cloudinary.com/dsvz8fu0u/image/upload/v1762003641/pexels-thisispav-29383010_oiw9ah.jpg',
+    title: 'Luxury Villa Exterior Render',
+    category: '3D Renders',
+    folder: 'utkrisht/gallery',
+  },
+  {
+    id: '2',
+    url: 'https://res.cloudinary.com/dsvz8fu0u/image/upload/v1762003639/pexels-the-ghazi-2152398165-33314761_atdllf.jpg',
+    title: 'Modern Living Room Visualization',
+    category: '3D Renders',
+    folder: 'utkrisht/gallery',
+  },
+  {
+    id: '3',
+    url: 'https://res.cloudinary.com/dsvz8fu0u/image/upload/v1762003638/pexels-the-ghazi-2152398165-33167283_xuyitl.jpg',
+    title: 'Open Kitchen & Dining Concept',
+    category: '3D Renders',
+    folder: 'utkrisht/gallery',
+  },
+  {
+    id: '4',
+    url: 'https://res.cloudinary.com/dsvz8fu0u/image/upload/v1762003636/pexels-the-ghazi-2152398165-33167281_pxvens.jpg',
+    title: 'Sunlit Bedroom Interior Render',
+    category: '3D Renders',
+    folder: 'utkrisht/gallery',
+  },
+  {
+    id: '5',
+    url: 'https://res.cloudinary.com/dsvz8fu0u/image/upload/v1762003635/pexels-the-ghazi-2152398165-32473240_ixy4wk.jpg',
+    title: 'Contemporary Office Visualization',
+    category: '3D Renders',
+    folder: 'utkrisht/gallery',
+  },
+  {
+    id: '6',
+    url: 'https://res.cloudinary.com/dsvz8fu0u/image/upload/v1762003633/pexels-the-ghazi-2152398165-32421761_bt3lxl.jpg',
+    title: 'Elegant Hotel Lobby Design',
+    category: '3D Renders',
+    folder: 'utkrisht/gallery',
+  },
+  {
+    id: '7',
+    url: 'https://res.cloudinary.com/dsvz8fu0u/image/upload/v1762003632/pexels-the-ghazi-2152398165-32421758_l4ihub.jpg',
+    title: 'Industrial Loft Render',
+    category: '3D Renders',
+    folder: 'utkrisht/gallery',
+  },
+  {
+    id: '8',
+    url: 'https://res.cloudinary.com/dsvz8fu0u/image/upload/v1762003630/pexels-scene-design-144978225-14512058_swko4n.jpg',
+    title: 'Architectural Facade Lighting Concept',
+    category: '3D Renders',
+    folder: 'utkrisht/gallery',
+  },
+  {
+    id: '9',
+    url: 'https://res.cloudinary.com/dsvz8fu0u/image/upload/v1762003629/pexels-pu-ca-adryan-163345030-32383875_jp9zj7.jpg',
+    title: 'Luxury Bathroom Visualization',
+    category: '3D Renders',
+    folder: 'utkrisht/gallery',
+  },
+  {
+    id: '10',
+    url: 'https://res.cloudinary.com/dsvz8fu0u/image/upload/v1762003627/pexels-pu-ca-adryan-163345030-32246936_hgz5dr.jpg',
+    title: 'Minimalist Bedroom Design Render',
+    category: '3D Renders',
+    folder: 'utkrisht/gallery',
+  },
+  {
+    id: '11',
+    url: 'https://res.cloudinary.com/dsvz8fu0u/image/upload/v1762003625/pexels-pu-ca-adryan-163345030-31525131_pmahxy.jpg',
+    title: 'Modern Kitchen Interior',
+    category: '3D Renders',
+    folder: 'utkrisht/gallery',
+  },
+  {
+    id: '12',
+    url: 'https://res.cloudinary.com/dsvz8fu0u/image/upload/v1762003624/pexels-perqued-17840533_uhlnwh.jpg',
+    title: '3D Concept Apartment Layout',
+    category: '3D Renders',
+    folder: 'utkrisht/gallery',
+  },
+  {
+    id: '13',
+    url: 'https://res.cloudinary.com/dsvz8fu0u/image/upload/v1762003624/pexels-perqued-17840536_wzmz0o.jpg',
+    title: 'Exterior Night Render',
+    category: '3D Renders',
+    folder: 'utkrisht/gallery',
+  },
+  {
+    id: '14',
+    url: 'https://res.cloudinary.com/dsvz8fu0u/image/upload/v1762003621/pexels-perqued-10919437_qqygki.jpg',
+    title: 'Urban Penthouse Visualization',
+    category: '3D Renders',
+    folder: 'utkrisht/gallery',
+  },
+  {
+    id: '15',
+    url: 'https://res.cloudinary.com/dsvz8fu0u/image/upload/v1762003621/pexels-paulseling-20551757_vzh1h5.jpg',
+    title: 'Scandinavian Living Area Render',
+    category: '3D Renders',
+    folder: 'utkrisht/gallery',
+  },
+  {
+    id: '16',
+    url: 'https://res.cloudinary.com/dsvz8fu0u/image/upload/v1762003620/pexels-maruf-ahammed-381941310-15575713_iw7u1a.jpg',
+    title: 'Concept Store Interior',
+    category: '3D Renders',
+    folder: 'utkrisht/gallery',
+  },
+  {
+    id: '17',
+    url: 'https://res.cloudinary.com/dsvz8fu0u/image/upload/v1762003616/pexels-jivitharsan-suresh-3647340-30871314_bqz9e8.jpg',
+    title: 'Studio Apartment Render',
+    category: '3D Renders',
+    folder: 'utkrisht/gallery',
+  },
+  {
+    id: '18',
+    url: 'https://res.cloudinary.com/dsvz8fu0u/image/upload/v1762003616/pexels-jivitharsan-suresh-3647340-30871307_mjvm1u.jpg',
+    title: 'Futuristic Concept Interior',
+    category: '3D Renders',
+    folder: 'utkrisht/gallery',
+  },
+  {
+    id: '19',
+    url: 'https://res.cloudinary.com/dsvz8fu0u/image/upload/v1762003615/pexels-jivitharsan-suresh-3647340-30871309_u9sqa4.jpg',
+    title: 'Luxury Dining Space Render',
+    category: '3D Renders',
+    folder: 'utkrisht/gallery',
+  },
+  {
+    id: '20',
+    url: 'https://res.cloudinary.com/dsvz8fu0u/image/upload/v1762003614/pexels-carlos-montelara-3450804-6032597_nfoc2c.jpg',
+    title: 'Corporate Lobby Visualization',
+    category: '3D Renders',
+    folder: 'utkrisht/gallery',
+  },
+  {
+    id: '21',
+    url: 'https://res.cloudinary.com/dsvz8fu0u/image/upload/v1762003613/pexels-arutnevv-32485942_th9sxg.jpg',
+    title: 'Architectural Night Scene Render',
+    category: '3D Renders',
+    folder: 'utkrisht/gallery',
+  },
+];
 
 export default function DesignGallery() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -20,11 +169,11 @@ export default function DesignGallery() {
   const [error, setError] = useState<string | null>(null);
 
   const categories = [
-    'All',
-    'Living Room',
-    'Bedroom',
-    'Kitchen',
-    'Commercial',
+    // 'All',
+    // 'Living Room',
+    // 'Bedroom',
+    // 'Kitchen',
+    // 'Commercial',
     '3D Renders',
   ];
 
@@ -41,7 +190,12 @@ export default function DesignGallery() {
       const res = await fetch(base + qs, { cache: 'no-store' });
       if (!res.ok) throw new Error('Failed to load gallery');
       const data: MediaItem[] = await res.json();
-      setItems(data);
+     const filteredItems =
+  activeCategory === 'All'
+    ? galleryData
+    : galleryData.filter((item) => item.category === activeCategory);
+setItems(filteredItems);
+
     } catch (e: any) {
       setError(e?.message || 'Error');
     } finally {

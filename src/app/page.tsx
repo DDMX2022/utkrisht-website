@@ -23,7 +23,7 @@ export default function Home() {
 
       <Portfolio />
 
-      <RecentProjects />
+      {/* <RecentProjects /> */}
 
       {/* Gallery Section */}
       <DesignGallery />
