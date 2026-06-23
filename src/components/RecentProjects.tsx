@@ -388,7 +388,7 @@ export default function RecentProjects() {
       {isModalOpen &&
         modalProjectIndex !== null &&
         filteredProjects[modalProjectIndex] && (
-          <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4'>
+          <div className='fixed inset-0 z-[200] flex items-center justify-center bg-black/70 p-4'>
             <div className='bg-white w-full max-w-5xl rounded-lg overflow-hidden shadow-2xl relative'>
               <button
                 onClick={closeModal}

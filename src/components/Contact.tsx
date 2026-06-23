@@ -21,6 +21,8 @@ export default function Contact() {
   // New: modal open/close state
   const [isOpen, setIsOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const handleInputChange = (
     e: React.ChangeEvent<
@@ -35,27 +37,30 @@ export default function Contact() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitError(null);
     try {
       setSubmitting(true);
       const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, source: 'Contact Form' }),
       });
       if (!res.ok) throw new Error('Failed to submit');
-      // Reset form
       setFormData({ name: '', email: '', phone: '', service: '', message: '' });
-      // Close modal after submit
-      setIsOpen(false);
-      // Optional: basic feedback
-      if (typeof window !== 'undefined') alert('Message sent successfully');
+      setSubmitted(true);
     } catch (err) {
       console.error(err);
-      if (typeof window !== 'undefined') alert('Failed to send message');
+      setSubmitError('Failed to send message. Please try again.');
     } finally {
       setSubmitting(false);
     }
   };
+
+  function closeModal() {
+    setIsOpen(false);
+    setSubmitted(false);
+    setSubmitError(null);
+  }
 
   return (
     <section id='contact' className='py-20 bg-gray-900'>
@@ -184,7 +189,7 @@ export default function Contact() {
           {/* Backdrop */}
           <div
             className='absolute inset-0 bg-black/60'
-            onClick={() => setIsOpen(false)}
+            onClick={closeModal}
           />
 
           {/* Dialog */}
@@ -196,13 +201,29 @@ export default function Contact() {
                   type='button'
                   aria-label='Close'
                   className='p-2 rounded-md hover:bg-gray-100'
-                  onClick={() => setIsOpen(false)}
+                  onClick={closeModal}
                 >
                   <X className='h-5 w-5 text-gray-600' />
                 </button>
               </div>
 
-              {/* Form moved into modal */}
+              {submitted ? (
+                <div className='text-center bg-gray-50 rounded-lg p-8'>
+                  <p className='text-xl font-semibold text-gray-900 mb-2'>
+                    Message sent successfully
+                  </p>
+                  <p className='text-gray-600 mb-6'>
+                    Thanks for reaching out — we&apos;ll get back to you shortly.
+                  </p>
+                  <Button
+                    type='button'
+                    className='bg-gray-900 hover:bg-gray-800'
+                    onClick={closeModal}
+                  >
+                    Close
+                  </Button>
+                </div>
+              ) : (
               <form onSubmit={handleSubmit} className='space-y-6'>
                 <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                   <div>
@@ -305,6 +326,10 @@ export default function Contact() {
                   />
                 </div>
 
+                {submitError && (
+                  <p className='text-sm text-red-600'>{submitError}</p>
+                )}
+
                 <Button
                   type='submit'
                   size='lg'
@@ -315,6 +340,7 @@ export default function Contact() {
                   <Send className='ml-2 h-5 w-5' />
                 </Button>
               </form>
+              )}
             </div>
           </div>
         </div>

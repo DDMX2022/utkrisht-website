@@ -1,16 +1,19 @@
 import {
-  Facebook,
   Instagram,
   Linkedin,
   Mail,
   MapPin,
   Phone,
+  Youtube,
 } from 'lucide-react';
 
 const MAP_URL = 'https://maps.app.goo.gl/uPzf7nA2CzJhAW3w8?g_st=aw';
 const CONTACT_EMAIL = 'utkrisht.interiors@gmail.com';
 const PRIMARY_PHONE = '9891347353';
 const SECONDARY_PHONE = '9999258001';
+const INSTAGRAM_URL = 'https://www.instagram.com/interiorsbyutkrisht/';
+const LINKEDIN_URL = 'https://www.linkedin.com/feed/';
+const YOUTUBE_URL = 'https://www.youtube.com/@UtkrishtInteriors';
 
 export default function Footer() {
   const quickLinks = [
@@ -43,25 +46,31 @@ export default function Footer() {
             </p>
             <div className='flex space-x-4'>
               <a
-                href='#'
+                href={INSTAGRAM_URL}
+                target='_blank'
+                rel='noopener noreferrer'
                 className='bg-gray-800 p-2 rounded-full hover:bg-gray-700 transition-colors'
                 aria-label='Instagram'
               >
                 <Instagram className='h-5 w-5' />
               </a>
               <a
-                href='#'
-                className='bg-gray-800 p-2 rounded-full hover:bg-gray-700 transition-colors'
-                aria-label='Facebook'
-              >
-                <Facebook className='h-5 w-5' />
-              </a>
-              <a
-                href='#'
+                href={LINKEDIN_URL}
+                target='_blank'
+                rel='noopener noreferrer'
                 className='bg-gray-800 p-2 rounded-full hover:bg-gray-700 transition-colors'
                 aria-label='LinkedIn'
               >
                 <Linkedin className='h-5 w-5' />
+              </a>
+              <a
+                href={YOUTUBE_URL}
+                target='_blank'
+                rel='noopener noreferrer'
+                className='bg-gray-800 p-2 rounded-full hover:bg-gray-700 transition-colors'
+                aria-label='YouTube'
+              >
+                <Youtube className='h-5 w-5' />
               </a>
             </div>
           </div>

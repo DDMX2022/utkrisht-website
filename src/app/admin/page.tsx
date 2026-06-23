@@ -17,6 +17,7 @@ import {
 
 import BlogManager from '@/components/admin/BlogManager';
 import { Button } from '@/components/ui/button';
+import LeadsManager from '@/components/admin/LeadsManager';
 import MediaManager from '@/components/admin/MediaManager';
 import ProjectsManager from '@/components/admin/ProjectsManager';
 import { signOut, useSession } from 'next-auth/react';
@@ -75,6 +76,7 @@ export default function AdminDashboard() {
     { id: 'projects', label: 'Projects', icon: Image },
     // { id: 'blog', label: 'Blog Posts', icon: FileText }, // commented out
     { id: 'media', label: 'Media', icon: Image },
+    { id: 'leads', label: 'Leads', icon: Users },
     // { id: 'users', label: 'Users', icon: Users }, // commented out
     { id: 'settings', label: 'Settings', icon: Settings },
   ];
@@ -114,6 +116,8 @@ export default function AdminDashboard() {
       //   return <BlogManager />;
       case 'media':
         return <MediaManager />;
+      case 'leads':
+        return <LeadsManager />;
       // case 'users':
       //   return <div className='bg-white p-6 rounded-lg shadow-md'>Users Management coming later.</div>;
       case 'settings':

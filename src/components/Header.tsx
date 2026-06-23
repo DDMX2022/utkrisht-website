@@ -34,6 +34,7 @@ export default function Header() {
     { name: 'Home', href: '/#home' },
     { name: 'About', href: '/#about' },
     { name: 'Services', href: '/#services' },
+    { name: 'Packages', href: '/#packages' },
     { name: 'Projects', href: '/#projects' },
     { name: 'Collaborators', href: '/collaborators' },
     { name: 'Blog', href: '/#blog' },
@@ -49,9 +50,12 @@ export default function Header() {
       const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, source: 'Get Quote (Header)' }),
       });
-      if (!res.ok) throw new Error((await res.json()).error || 'Failed');
+      if (!res.ok) {
+        const body = await res.json().catch(() => null);
+        throw new Error(body?.error || 'Something went wrong. Please try again.');
+      }
       setFormSuccess(true);
       setForm({ name: '', email: '', phone: '', service: '', message: '' });
     } catch (err: any) {
