@@ -94,13 +94,3 @@ model ContactInquiry {
   createdAt DateTime @default(now())
 }
 
-model PortfolioItem {
-  id          String   @id @default(cuid())
-  title       String
-  category    String
-  status      String   @default("Draft")
-  description String?
-  imageUrl    String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-}

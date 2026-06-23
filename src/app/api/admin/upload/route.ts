@@ -47,7 +47,6 @@ export async function POST(req: NextRequest) {
     const title = formData.get('title') as string | null;
     const category = (formData.get('category') as string | null) || null;
     const projectId = (formData.get('projectId') as string | null) || null;
-    const portfolioId = (formData.get('portfolioId') as string | null) || null;
 
     // Map section category to Cloudinary folder
     const folderMap: Record<string, string> = {
@@ -57,7 +56,6 @@ export async function POST(req: NextRequest) {
       Team: 'utkrisht/team',
       Gallery: 'utkrisht/gallery',
       Projects: 'utkrisht/projects',
-      Portfolio: 'utkrisht/portfolio',
       Blog: 'utkrisht/blog',
     };
     const isTopLevel = !!(category && folderMap[category]);
@@ -68,7 +66,6 @@ export async function POST(req: NextRequest) {
     // Determine destination folder
     let folder = baseFolder;
     if (projectId) folder = `${folderMap['Projects']}/${projectId}`;
-    else if (portfolioId) folder = `${folderMap['Portfolio']}/${portfolioId}`;
     else if (!isTopLevel && category) {
       // Save gallery images in subfolders per category
       folder = `${folderMap['Gallery']}/${slugify(category)}`;
@@ -106,7 +103,6 @@ export async function POST(req: NextRequest) {
       title,
       category,
       projectId,
-      portfolioId,
       folder: folder,
       contentType: req.headers.get('content-type')?.slice(0, 100),
     });
@@ -240,7 +236,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Attach to Project or Portfolio if provided
+    // Attach to Project if provided
     if (projectId) {
       const project = await db.project.findUnique({ where: { id: projectId } });
       if (!project) {
@@ -262,30 +258,6 @@ export async function POST(req: NextRequest) {
         },
       });
       return NextResponse.json({ media, projectImage }, { status: 201 });
-    }
-
-    if (portfolioId) {
-      const pdb: any = db as any;
-      const item = await pdb.portfolioItem.findUnique({
-        where: { id: portfolioId },
-      });
-      if (!item) {
-        try {
-          await cloudinary.uploader.destroy(res.public_id);
-        } catch {}
-        return NextResponse.json(
-          { error: 'Invalid portfolioId' },
-          { status: 400 }
-        );
-      }
-      const updated = await pdb.portfolioItem.update({
-        where: { id: portfolioId },
-        data: { imageUrl: media.url },
-      });
-      return NextResponse.json(
-        { media, portfolioItem: updated },
-        { status: 201 }
-      );
     }
 
     return NextResponse.json(media, { status: 201 });

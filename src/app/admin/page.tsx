@@ -17,9 +17,7 @@ import {
 
 import BlogManager from '@/components/admin/BlogManager';
 import { Button } from '@/components/ui/button';
-import GalleryManager from '@/components/admin/GalleryManager';
 import MediaManager from '@/components/admin/MediaManager';
-import PortfolioManager from '@/components/admin/PortfolioManager';
 import ProjectsManager from '@/components/admin/ProjectsManager';
 import { signOut, useSession } from 'next-auth/react';
 import { useState, useEffect } from 'react';
@@ -75,8 +73,6 @@ export default function AdminDashboard() {
   const sidebarItems = [
     // Removed dashboard
     { id: 'projects', label: 'Projects', icon: Image },
-    { id: 'portfolio', label: 'Portfolio', icon: Image },
-    { id: 'gallery', label: 'Gallery', icon: Image },
     // { id: 'blog', label: 'Blog Posts', icon: FileText }, // commented out
     { id: 'media', label: 'Media', icon: Image },
     // { id: 'users', label: 'Users', icon: Users }, // commented out
@@ -114,10 +110,6 @@ export default function AdminDashboard() {
     switch (activeTab) {
       case 'projects':
         return <ProjectsManager />;
-      case 'portfolio':
-        return <PortfolioManager />;
-      case 'gallery':
-        return <GalleryManager />;
       // case 'blog':
       //   return <BlogManager />;
       case 'media':
