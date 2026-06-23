@@ -161,10 +161,16 @@ export const galleryData: MediaItem[] = [
   },
 ];
 
+function getGalleryItems(category: string) {
+  return category && category !== 'All'
+    ? galleryData.filter((item) => item.category === category)
+    : galleryData;
+}
+
 export default function DesignGallery() {
   const sectionRef = useRef<HTMLElement>(null);
   const [activeCategory, setActiveCategory] = useState('All');
-  const [items, setItems] = useState<MediaItem[]>([]);
+  const [items, setItems] = useState<MediaItem[]>(galleryData);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -180,6 +186,8 @@ export default function DesignGallery() {
   async function load(category?: string) {
     setLoading(true);
     setError(null);
+    const fallbackItems = getGalleryItems(category || activeCategory);
+
     try {
       const base =
         '/api/media?folder=' + encodeURIComponent('utkrisht/gallery');
@@ -190,14 +198,9 @@ export default function DesignGallery() {
       const res = await fetch(base + qs, { cache: 'no-store' });
       if (!res.ok) throw new Error('Failed to load gallery');
       const data: MediaItem[] = await res.json();
-     const filteredItems =
-  activeCategory === 'All'
-    ? galleryData
-    : galleryData.filter((item) => item.category === activeCategory);
-setItems(filteredItems);
-
-    } catch (e: any) {
-      setError(e?.message || 'Error');
+      setItems(Array.isArray(data) && data.length > 0 ? data : fallbackItems);
+    } catch {
+      setItems(fallbackItems);
     } finally {
       setLoading(false);
     }

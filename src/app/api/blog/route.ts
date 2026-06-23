@@ -1,9 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 import { db } from '@/lib/db';
+import { isDatabaseConfigured } from '@/lib/db-env';
+
+export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest) {
   try {
+    if (!isDatabaseConfigured()) {
+      return NextResponse.json([]);
+    }
+
     const { searchParams } = new URL(req.url);
     const limit = Number(searchParams.get('limit') || '0') || undefined;
 

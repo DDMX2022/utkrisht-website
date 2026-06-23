@@ -190,9 +190,16 @@ const portfolioData: PortfolioItem[] = [
 
 
 ];
+
+function getPortfolioItems(category: string) {
+  return category && category !== 'All'
+    ? portfolioData.filter((item) => item.category === category)
+    : portfolioData;
+}
+
 export default function Portfolio() {
   const [activeCategory, setActiveCategory] = useState('All');
-  const [items, setItems] = useState<PortfolioItem[]>([]);
+  const [items, setItems] = useState<PortfolioItem[]>(portfolioData);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -201,6 +208,8 @@ export default function Portfolio() {
   async function load(category?: string) {
     setLoading(true);
     setError(null);
+    const fallbackItems = getPortfolioItems(category || activeCategory);
+
     try {
       const qs =
         category && category !== 'All'
@@ -209,15 +218,9 @@ export default function Portfolio() {
       const res = await fetch(`/api/portfolio${qs}`, { cache: 'no-store' });
       if (!res.ok) throw new Error('Failed to load portfolio');
       const data: PortfolioItem[] = await res.json();
-      const filtered =
-  category && category !== 'All'
-    ? portfolioData.filter((item) => item.category === category)
-    : portfolioData;
-
-setItems(filtered);
-
-    } catch (e: any) {
-      setError(e?.message || 'Error loading');
+      setItems(Array.isArray(data) && data.length > 0 ? data : fallbackItems);
+    } catch {
+      setItems(fallbackItems);
     } finally {
       setLoading(false);
     }

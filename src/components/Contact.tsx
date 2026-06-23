@@ -5,6 +5,11 @@ import { Clock, Mail, MapPin, Phone, Send, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 
+const MAP_URL = 'https://maps.app.goo.gl/uPzf7nA2CzJhAW3w8?g_st=aw';
+const CONTACT_EMAIL = 'utkrisht.interiors@gmail.com';
+const PRIMARY_PHONE = '9891347353';
+const SECONDARY_PHONE = '9999258001';
+
 export default function Contact() {
   const [formData, setFormData] = useState({
     name: '',
@@ -79,7 +84,20 @@ export default function Contact() {
                   </div>
                   <div>
                     <h4 className='text-white font-semibold'>Phone</h4>
-                    <p className='text-gray-300'>+1 (555) 123-4567</p>
+                    <div className='space-y-1 text-gray-300'>
+                      <a
+                        href={`tel:+91${PRIMARY_PHONE}`}
+                        className='block hover:text-white transition-colors'
+                      >
+                        +91 {PRIMARY_PHONE}
+                      </a>
+                      <a
+                        href={`tel:+91${SECONDARY_PHONE}`}
+                        className='block hover:text-white transition-colors'
+                      >
+                        +91 {SECONDARY_PHONE}
+                      </a>
+                    </div>
                   </div>
                 </div>
 
@@ -89,7 +107,12 @@ export default function Contact() {
                   </div>
                   <div>
                     <h4 className='text-white font-semibold'>Email</h4>
-                    <p className='text-gray-300'>info@utkrisht.com</p>
+                    <a
+                      href={`mailto:${CONTACT_EMAIL}`}
+                      className='text-gray-300 hover:text-white transition-colors'
+                    >
+                      {CONTACT_EMAIL}
+                    </a>
                   </div>
                 </div>
 
@@ -99,11 +122,16 @@ export default function Contact() {
                   </div>
                   <div>
                     <h4 className='text-white font-semibold'>Address</h4>
-                    <p className='text-gray-300'>
-                      123 Design Street
+                    <a
+                      href={MAP_URL}
+                      target='_blank'
+                      rel='noopener noreferrer'
+                      className='block text-gray-300 hover:text-white transition-colors'
+                    >
+                      Plot No. 1, 4th floor - A 405 -Shakti Khand 2
                       <br />
-                      New York, NY 10001
-                    </p>
+                      Indirapuram, Ghaziabad, Uttar Pradesh 201014
+                    </a>
                   </div>
                 </div>
 
@@ -231,7 +259,7 @@ export default function Contact() {
                       value={formData.phone}
                       onChange={handleInputChange}
                       className='w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-colors'
-                      placeholder='(555) 123-4567'
+                      placeholder={`+91 ${PRIMARY_PHONE}`}
                     />
                   </div>
 

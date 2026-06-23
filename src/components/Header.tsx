@@ -31,13 +31,14 @@ export default function Header() {
   }, []);
 
   const navItems = [
-    { name: 'Home', href: '#home' },
-    { name: 'About', href: '#about' },
-    { name: 'Services', href: '#services' },
-    { name: 'Projects', href: '#projects' },
-    { name: 'Gallery', href: '#gallery' },
-    { name: 'Blog', href: '#blog' },
-    { name: 'Contact', href: '#contact' },
+    { name: 'Home', href: '/#home' },
+    { name: 'About', href: '/#about' },
+    { name: 'Services', href: '/#services' },
+    { name: 'Projects', href: '/#projects' },
+    { name: 'Gallery', href: '/#gallery' },
+    { name: 'Collaborators', href: '/collaborators' },
+    { name: 'Blog', href: '/#blog' },
+    { name: 'Contact', href: '/#contact' },
   ];
 
   async function submitQuote(e: React.FormEvent) {
@@ -74,12 +75,12 @@ export default function Header() {
           </div>
 
           <nav className='hidden md:block'>
-            <div className='ml-10 flex items-baseline space-x-8'>
+            <div className='ml-8 flex items-baseline space-x-4 lg:space-x-6'>
               {navItems.map((item) => (
                 <a
                   key={item.name}
                   href={item.href}
-                  className='text-gray-700 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors duration-200 hover:scale-105'
+                  className='text-gray-700 hover:text-gray-900 px-2 py-2 text-sm font-medium transition-colors duration-200 hover:scale-105'
                 >
                   {item.name}
                 </a>

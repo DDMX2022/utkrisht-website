@@ -7,14 +7,20 @@ import {
   Phone,
 } from 'lucide-react';
 
+const MAP_URL = 'https://maps.app.goo.gl/uPzf7nA2CzJhAW3w8?g_st=aw';
+const CONTACT_EMAIL = 'utkrisht.interiors@gmail.com';
+const PRIMARY_PHONE = '9891347353';
+const SECONDARY_PHONE = '9999258001';
+
 export default function Footer() {
   const quickLinks = [
-    { name: 'Home', href: '#home' },
-    { name: 'About Us', href: '#about' },
-    { name: 'Services', href: '#services' },
-    { name: 'Projects', href: '#projects' },
-    { name: 'Contact Us', href: '#contact' },
-    { name: 'Blog', href: '#blog' },
+    { name: 'Home', href: '/#home' },
+    { name: 'About Us', href: '/#about' },
+    { name: 'Services', href: '/#services' },
+    { name: 'Projects', href: '/#projects' },
+    { name: 'Collaborators', href: '/collaborators' },
+    { name: 'Contact Us', href: '/#contact' },
+    { name: 'Blog', href: '/#blog' },
   ];
 
   const legalLinks = [
@@ -100,18 +106,41 @@ export default function Footer() {
             <div className='space-y-3 text-sm'>
               <div className='flex items-start space-x-3'>
                 <MapPin className='h-5 w-5 text-gray-400 mt-1 flex-shrink-0' />
-                <p className='text-gray-300'>
-                  Plot No 1, Shakti Khand -2, 4th Floor, SS Co-Working,
-                  Indirapuram, Ghaziabad
-                </p>
+                <a
+                  href={MAP_URL}
+                  target='_blank'
+                  rel='noopener noreferrer'
+                  className='text-gray-300 hover:text-white transition-colors'
+                >
+                  Plot No. 1, 4th floor - A 405 -Shakti Khand 2, Indirapuram,
+                  Ghaziabad, Uttar Pradesh 201014
+                </a>
               </div>
               <div className='flex items-center space-x-3'>
                 <Phone className='h-5 w-5 text-gray-400' />
-                <p className='text-gray-300'>+91-XXXXXXXXXX</p>
+                <div className='text-gray-300'>
+                  <a
+                    href={`tel:+91${PRIMARY_PHONE}`}
+                    className='block hover:text-white transition-colors'
+                  >
+                    +91 {PRIMARY_PHONE}
+                  </a>
+                  <a
+                    href={`tel:+91${SECONDARY_PHONE}`}
+                    className='block hover:text-white transition-colors'
+                  >
+                    +91 {SECONDARY_PHONE}
+                  </a>
+                </div>
               </div>
               <div className='flex items-center space-x-3'>
                 <Mail className='h-5 w-5 text-gray-400' />
-                <p className='text-gray-300'>info@utkrishtinteriors.com</p>
+                <a
+                  href={`mailto:${CONTACT_EMAIL}`}
+                  className='text-gray-300 hover:text-white transition-colors'
+                >
+                  {CONTACT_EMAIL}
+                </a>
               </div>
             </div>
           </div>

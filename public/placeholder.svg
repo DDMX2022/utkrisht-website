@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600" role="img" aria-labelledby="title desc">
+  <title id="title">Utkrisht Interiors placeholder</title>
+  <desc id="desc">A simple placeholder image for missing project media.</desc>
+  <rect width="800" height="600" fill="#f3f4f6"/>
+  <rect x="96" y="96" width="608" height="408" rx="24" fill="#ffffff" stroke="#d1d5db" stroke-width="4"/>
+  <path d="M160 420l128-128 88 88 64-64 200 200H160z" fill="#d1d5db"/>
+  <circle cx="572" cy="196" r="48" fill="#9ca3af"/>
+  <text x="400" y="548" text-anchor="middle" font-family="Arial, sans-serif" font-size="28" font-weight="700" fill="#374151">Utkrisht Interiors</text>
+</svg>
