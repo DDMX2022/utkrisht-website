@@ -1,4 +1,7 @@
 import { PrismaClient } from '@prisma/client';
+import { applyDatabaseEnvAliases } from './db-env';
+
+applyDatabaseEnvAliases();
 
 const globalForPrisma = global as unknown as {
   prisma: PrismaClient | undefined;

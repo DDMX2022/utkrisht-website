@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="640" viewBox="0 0 640 640" role="img" aria-labelledby="title desc">
+  <title id="title">Vikas Sharma founder portrait placeholder</title>
+  <desc id="desc">A branded placeholder portrait for Vikas Sharma.</desc>
+  <rect width="640" height="640" fill="#111827"/>
+  <circle cx="320" cy="232" r="104" fill="#e5e7eb"/>
+  <path d="M128 588c22-116 94-184 192-184s170 68 192 184H128z" fill="#e5e7eb"/>
+  <circle cx="320" cy="232" r="72" fill="#9ca3af"/>
+  <path d="M192 588c26-74 72-112 128-112s102 38 128 112H192z" fill="#9ca3af"/>
+  <text x="320" y="324" text-anchor="middle" font-family="Arial, sans-serif" font-size="72" font-weight="700" fill="#111827">VS</text>
+  <text x="320" y="580" text-anchor="middle" font-family="Arial, sans-serif" font-size="30" font-weight="700" fill="#ffffff">Vikas Sharma</text>
+</svg>

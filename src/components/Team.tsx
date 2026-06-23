@@ -5,26 +5,36 @@ import { useEffect, useRef, useState } from 'react';
 
 type MediaItem = { url: string; title?: string | null };
 
+function normalizeName(value: string) {
+  return value.toLowerCase().replace(/[^a-z0-9]/g, '');
+}
+
 export default function Team() {
   const sectionRef = useRef<HTMLElement>(null);
   const [teamPhotos, setTeamPhotos] = useState<MediaItem[]>([]);
 
   const teamMembers = [
     {
-      name: 'Vikas Sharma',
-      role: 'Co-Founder',
-      image: '/placeholder.svg?height=400&width=400',
-      description:
-        'With a sharp eye for detail and a deep understanding of materials, structures, and spatial functionality, Vikas Sharma is the technical backbone of Utkrisht. From structural planning to choosing the right finishes, he ensures every element serves both form and function.',
-      expertise: 'Technical Planning, Material Sourcing, Structural Design',
-    },
-    {
       name: 'Tanusha Dutt Misra',
       role: 'Co-Founder',
-      image: '/placeholder.svg?height=400&width=400',
+      image:
+        'https://res.cloudinary.com/dsvz8fu0u/image/upload/c_fill,g_face,w_900,h_1100,q_auto,f_auto/v1782234487/tanusha-dutt-misra_vgnlds.png',
+      fallbackImage: '/founders/tanusha-dutt-misra.svg',
+      imagePosition: 'object-top',
       description:
         "A design enthusiast with an instinct for aesthetics and personalization, Tanusha Dutt Misra leads the creative vision at Utkrisht. Her passion for perfection and eye for detail help translate every client's brief into a dream space with a soul.",
       expertise: 'Creative Direction, Space Planning, Client Relations',
+    },
+    {
+      name: 'Vikas Sharma',
+      role: 'Co-Founder',
+      image:
+        'https://res.cloudinary.com/dsvz8fu0u/image/upload/c_fill,g_face,w_900,h_1100,q_auto,f_auto/v1782234019/vikas-sharma_ychc2l.jpg',
+      fallbackImage: '/founders/vikas-sharma.svg',
+      imagePosition: 'object-top',
+      description:
+        'With a sharp eye for detail and a deep understanding of materials, structures, and spatial functionality, Vikas Sharma is the technical backbone of Utkrisht. From structural planning to choosing the right finishes, he ensures every element serves both form and function.',
+      expertise: 'Technical Planning, Material Sourcing, Structural Design',
     },
   ];
 
@@ -66,13 +76,13 @@ export default function Team() {
 
   const byTitle = new Map<string, string>();
   teamPhotos.forEach((m) => {
-    if (m.title) byTitle.set(m.title.toLowerCase(), m.url);
+    if (m.title) byTitle.set(normalizeName(m.title), m.url);
   });
   const orderedUrls = teamPhotos.map((m) => m.url).slice(0, 2);
   const rendered = teamMembers.map((m, i) => ({
     ...m,
     image:
-      byTitle.get(m.name.toLowerCase()) || // match by title
+      byTitle.get(normalizeName(m.name)) || // match by title
       orderedUrls[i] || // fallback by order
       m.image,
   }));
@@ -94,15 +104,19 @@ export default function Team() {
           {rendered.map((member, index) => (
             <div
               key={index}
-              className='team-card opacity-0 bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300'
+              className='team-card bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300'
               style={{ animationDelay: `${index * 200}ms` }}
             >
               <div className='md:flex'>
-                <div className='md:w-1/2'>
+                <div className='relative h-[34rem] overflow-hidden bg-gray-100 md:h-auto md:w-1/2 md:self-stretch'>
                   <img
                     src={member.image || '/placeholder.svg'}
                     alt={member.name}
-                    className='w-full h-64 md:h-full object-cover'
+                    onError={(event) => {
+                      event.currentTarget.onerror = null;
+                      event.currentTarget.src = member.fallbackImage;
+                    }}
+                    className={`absolute inset-0 h-full w-full object-cover ${member.imagePosition}`}
                   />
                 </div>
                 <div className='md:w-1/2 p-8'>
