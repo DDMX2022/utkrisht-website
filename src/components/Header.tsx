@@ -6,10 +6,11 @@ import { Menu, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
+import SideDrawer from '@/components/SideDrawer';
 
 export default function Header() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const [quoteOpen, setQuoteOpen] = useState(false); // NEW
   const [submitting, setSubmitting] = useState(false); // NEW
   const [formError, setFormError] = useState<string | null>(null); // NEW
@@ -37,7 +38,6 @@ export default function Header() {
     { name: 'Packages', href: '/#packages' },
     { name: 'Projects', href: '/#projects' },
     { name: 'Collaborators', href: '/collaborators' },
-    { name: 'Blog', href: '/#blog' },
     { name: 'Contact', href: '/#contact' },
   ];
 
@@ -93,61 +93,32 @@ export default function Header() {
 
           <div className='hidden md:flex items-center gap-3'>
             <Button
-              className='bg-gray-900 hover:bg-gray-800 text-white'
+              className='bg-amber-500 hover:bg-amber-600 text-white'
               onClick={() => setQuoteOpen(true)}
             >
               Get Quote
             </Button>
           </div>
 
-          <div className='md:hidden'>
-            <Button
-              variant='ghost'
-              size='icon'
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-            >
-              {isMenuOpen ? (
-                <X className='h-6 w-6' />
-              ) : (
-                <Menu className='h-6 w-6' />
-              )}
-            </Button>
-          </div>
+          <button
+            type='button'
+            onClick={() => setDrawerOpen(true)}
+            className='md:hidden w-10 h-10 flex items-center justify-center rounded-full bg-gray-900/5 active:bg-gray-900/10 transition-colors'
+            aria-label='Open menu'
+          >
+            <Menu className='h-5 w-5 text-gray-900' />
+          </button>
+
         </div>
       </div>
 
-      {/* Mobile menu */}
-      {isMenuOpen && (
-        <div className='md:hidden bg-white border-t'>
-          <div className='px-2 pt-2 pb-3 space-y-1 sm:px-3'>
-            {navItems.map((item) => (
-              <a
-                key={item.name}
-                href={item.href}
-                className='text-gray-700 hover:text-gray-900 block px-3 py-2 text-base font-medium'
-                onClick={() => setIsMenuOpen(false)}
-              >
-                {item.name}
-              </a>
-            ))}
-            <Button
-              className='w-full mt-4 bg-gray-900 hover:bg-gray-800 text-white'
-              onClick={() => {
-                setQuoteOpen(true);
-                setIsMenuOpen(false);
-              }}
-            >
-              Get Quote
-            </Button>
-          </div>
-        </div>
-      )}
+      <SideDrawer open={drawerOpen} onOpenChange={setDrawerOpen} />
 
       {/* Get Quote Modal */}
       <Dialog.Root open={quoteOpen} onOpenChange={setQuoteOpen}>
         <Dialog.Portal>
-          <Dialog.Overlay className='fixed inset-0 z-[140] bg-black/60 data-[state=open]:animate-in data-[state=closed]:animate-out' />
-          <Dialog.Content className='fixed left-1/2 top-1/2 z-[150] w-full max-w-lg -translate-x-1/2 -translate-y-1/2 rounded-lg bg-white p-6 shadow-2xl focus:outline-none data-[state=open]:animate-in data-[state=closed]:animate-out'>
+          <Dialog.Overlay className='fixed inset-0 z-[140] bg-black/60 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=closed]:animate-out data-[state=closed]:fade-out-0' />
+          <Dialog.Content className='fixed left-1/2 top-1/2 z-[150] w-full max-w-lg -translate-x-1/2 -translate-y-1/2 rounded-lg bg-white p-6 shadow-2xl focus:outline-none data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=open]:duration-200 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95'>
             <div className='flex items-start justify-between mb-4'>
               <Dialog.Title className='text-xl font-semibold text-gray-900'>
                 Request a Quote
@@ -166,7 +137,7 @@ export default function Header() {
                   </label>
                   <input
                     required
-                    className='w-full border rounded px-3 py-2'
+                    className='w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-400 focus:border-transparent transition-colors'
                     value={form.name}
                     onChange={(e) => setForm({ ...form, name: e.target.value })}
                   />
@@ -178,7 +149,7 @@ export default function Header() {
                   <input
                     type='email'
                     required
-                    className='w-full border rounded px-3 py-2'
+                    className='w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-400 focus:border-transparent transition-colors'
                     value={form.email}
                     onChange={(e) =>
                       setForm({ ...form, email: e.target.value })
@@ -190,7 +161,7 @@ export default function Header() {
                     Phone
                   </label>
                   <input
-                    className='w-full border rounded px-3 py-2'
+                    className='w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-400 focus:border-transparent transition-colors'
                     value={form.phone}
                     onChange={(e) =>
                       setForm({ ...form, phone: e.target.value })
@@ -202,7 +173,7 @@ export default function Header() {
                     Service
                   </label>
                   <select
-                    className='w-full border rounded px-3 py-2'
+                    className='w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-400 focus:border-transparent transition-colors'
                     value={form.service}
                     onChange={(e) =>
                       setForm({ ...form, service: e.target.value })
@@ -223,7 +194,7 @@ export default function Header() {
                 <textarea
                   required
                   rows={4}
-                  className='w-full border rounded px-3 py-2'
+                  className='w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-400 focus:border-transparent transition-colors'
                   value={form.message}
                   onChange={(e) =>
                     setForm({ ...form, message: e.target.value })
@@ -245,7 +216,7 @@ export default function Header() {
                 <Button
                   type='submit'
                   disabled={submitting}
-                  className='bg-gray-900 hover:bg-gray-800 text-white'
+                  className='bg-amber-500 hover:bg-amber-600 text-white'
                 >
                   {submitting ? 'Sending...' : 'Send Request'}
                 </Button>

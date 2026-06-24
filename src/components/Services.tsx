@@ -1,10 +1,12 @@
 'use client';
 
 import { Building, Compass, Eye, Home, Palette, Settings } from 'lucide-react';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 export default function Services() {
   const sectionRef = useRef<HTMLElement>(null);
+  const scrollerRef = useRef<HTMLDivElement>(null);
+  const [activeDot, setActiveDot] = useState(0);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -25,6 +27,20 @@ export default function Services() {
 
     return () => observer.disconnect();
   }, []);
+
+  function handleScroll() {
+    const el = scrollerRef.current;
+    if (!el || el.children.length === 0) return;
+    const cardWidth = (el.children[0] as HTMLElement).offsetWidth + 16;
+    setActiveDot(Math.round(el.scrollLeft / cardWidth));
+  }
+
+  function scrollToCard(index: number) {
+    const el = scrollerRef.current;
+    if (!el || !el.children[index]) return;
+    const card = el.children[index] as HTMLElement;
+    el.scrollTo({ left: card.offsetLeft - el.offsetLeft, behavior: 'smooth' });
+  }
 
   const serviceCategories = [
     {
@@ -95,7 +111,7 @@ export default function Services() {
           </p>
         </div>
 
-        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8'>
+        <div className='hidden md:grid grid-cols-2 lg:grid-cols-3 gap-8'>
           {serviceCategories.map((category, index) => (
             <div
               key={index}
@@ -121,6 +137,52 @@ export default function Services() {
               </ul>
             </div>
           ))}
+        </div>
+
+        <div className='md:hidden'>
+          <div
+            ref={scrollerRef}
+            onScroll={handleScroll}
+            className='flex gap-4 overflow-x-auto snap-x snap-mandatory pb-4 scrollbar-hide -mx-4 px-4'
+          >
+            {serviceCategories.map((category, index) => (
+              <div
+                key={index}
+                className='service-category opacity-0 snap-center shrink-0 w-[85%] sm:w-[60%] bg-white p-6 rounded-lg shadow-lg'
+                style={{ animationDelay: `${index * 100}ms` }}
+              >
+                <div className='flex items-center justify-center w-14 h-14 bg-gray-900 text-white rounded-lg mb-4'>
+                  <category.icon className='h-7 w-7' />
+                </div>
+                <h3 className='text-lg font-semibold text-gray-900 mb-3'>
+                  {category.title}
+                </h3>
+                <ul className='space-y-2'>
+                  {category.services.map((service, serviceIndex) => (
+                    <li
+                      key={serviceIndex}
+                      className='text-sm text-gray-600 flex items-start'
+                    >
+                      <span className='w-2 h-2 bg-gray-400 rounded-full mt-2 mr-3 flex-shrink-0'></span>
+                      {service}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+          <div className='flex justify-center gap-1.5 mt-1'>
+            {serviceCategories.map((_, index) => (
+              <button
+                key={index}
+                aria-label={`Go to slide ${index + 1}`}
+                onClick={() => scrollToCard(index)}
+                className={`h-2 rounded-full transition-all ${
+                  activeDot === index ? 'w-5 bg-gray-900' : 'w-2 bg-gray-300'
+                }`}
+              />
+            ))}
+          </div>
         </div>
       </div>
     </section>

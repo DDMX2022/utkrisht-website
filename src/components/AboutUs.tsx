@@ -111,6 +111,11 @@ const AboutImg = "https://res.cloudinary.com/dsvz8fu0u/image/upload/v1762001168/
             <Button
               size='lg'
               className='bg-gray-900 hover:bg-gray-800 text-white'
+              onClick={() =>
+                document
+                  .getElementById('services')
+                  ?.scrollIntoView({ behavior: 'smooth' })
+              }
             >
               Learn More About Us
             </Button>

@@ -4,6 +4,7 @@ import {
   ArrowRight,
   Building2,
   Check,
+  ChevronRight,
   Eye,
   Layers,
   Monitor,
@@ -11,6 +12,7 @@ import {
   ShoppingBag,
   X,
 } from 'lucide-react';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 import type { LucideIcon } from 'lucide-react';
 
@@ -293,7 +295,7 @@ export default function Packages() {
           </p>
         </div>
 
-        <div className='flex flex-wrap justify-center gap-8'>
+        <div className='hidden md:flex flex-wrap justify-center gap-8'>
           {packages.map((pkg, index) => {
             const Icon = pkg.icon;
             return (
@@ -372,7 +374,7 @@ export default function Packages() {
 
                 <button
                   onClick={() => setActiveId(pkg.id)}
-                  className={`w-full group inline-flex items-center justify-center gap-2 px-4 py-3 rounded-full font-semibold transition-colors ${
+                  className={`w-full group inline-flex items-center justify-center gap-2 px-4 py-3 rounded-full font-semibold transition-all active:scale-95 ${
                     pkg.popular
                       ? 'bg-amber-500 hover:bg-amber-600 text-white'
                       : 'bg-gray-900 hover:bg-gray-800 text-white'
@@ -385,12 +387,80 @@ export default function Packages() {
             );
           })}
         </div>
+
+        <div className='md:hidden space-y-3'>
+          {packages.map((pkg, index) => {
+            const Icon = pkg.icon;
+            return (
+              <button
+                key={pkg.id}
+                onClick={() => setActiveId(pkg.id)}
+                style={{ animationDelay: `${index * 80}ms` }}
+                className={`package-card opacity-0 w-full flex items-center gap-3 bg-white rounded-2xl p-4 text-left shadow-sm active:scale-[0.98] transition-all ${
+                  pkg.popular ? 'ring-2 ring-amber-400' : 'ring-1 ring-gray-100'
+                }`}
+              >
+                <div
+                  className={`h-12 w-12 rounded-xl flex items-center justify-center flex-shrink-0 ${
+                    pkg.popular
+                      ? 'bg-amber-500 text-white'
+                      : 'bg-gray-900 text-white'
+                  }`}
+                >
+                  <Icon className='h-6 w-6' />
+                </div>
+
+                <div className='flex-1 min-w-0'>
+                  <div className='flex items-center gap-1.5 mb-0.5'>
+                    <h3 className='text-sm font-bold text-gray-900 truncate'>
+                      {pkg.title}
+                    </h3>
+                    {pkg.popular && (
+                      <span className='inline-flex items-center gap-0.5 bg-amber-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full flex-shrink-0'>
+                        <Sparkles className='h-2.5 w-2.5' />
+                        POPULAR
+                      </span>
+                    )}
+                  </div>
+                  <p className='text-xs text-gray-500 truncate mb-1.5'>
+                    {pkg.tagline}
+                  </p>
+                  <div className='flex items-baseline gap-1.5'>
+                    <span className='text-base font-extrabold text-gray-900'>
+                      {pkg.price}
+                    </span>
+                    <span className='text-xs text-gray-400 line-through'>
+                      {pkg.originalPrice}
+                    </span>
+                    <span className='text-[10px] font-bold text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded-full'>
+                      50% OFF
+                    </span>
+                  </div>
+                </div>
+
+                <ChevronRight className='h-5 w-5 text-gray-300 flex-shrink-0' />
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {/* Details Modal */}
-      {active && (
-        <div className='fixed inset-0 z-[200] flex items-center justify-center bg-black/70 p-4'>
-          <div className='bg-white w-full max-w-3xl rounded-2xl overflow-hidden shadow-2xl relative max-h-[90vh] flex flex-col'>
+      <AnimatePresence>
+        {active && (
+          <motion.div
+            className='fixed inset-0 z-[200] flex items-center justify-center bg-black/70 p-4'
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+          <motion.div
+            className='bg-white w-full max-w-3xl rounded-2xl overflow-hidden shadow-2xl relative max-h-[90vh] flex flex-col'
+            initial={{ opacity: 0, scale: 0.95, y: 12 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: 12 }}
+            transition={{ type: 'spring', damping: 28, stiffness: 320 }}
+          >
             <div className='bg-gray-900 text-white p-6 lg:p-8 relative'>
               <button
                 onClick={closeModal}
@@ -546,9 +616,10 @@ export default function Packages() {
                 )}
               </div>
             </div>
-          </div>
-        </div>
-      )}
+          </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }

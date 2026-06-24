@@ -143,3 +143,23 @@ html {
 .animate-slide-in-right {
   animation: slideInRight 0.6s ease-out;
 }
+
+/* App-like mobile bottom nav: keep content clear of the fixed bar + iOS safe area */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+@media (max-width: 767px) {
+  body {
+    padding-bottom: calc(4rem + env(safe-area-inset-bottom));
+  }
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}

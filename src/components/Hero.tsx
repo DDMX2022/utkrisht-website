@@ -86,11 +86,11 @@ export default function Hero() {
 
       {/* Content */}
       <div className='relative z-10 text-center text-white max-w-4xl mx-auto px-4'>
-        <h1 className='text-5xl md:text-7xl font-bold mb-6 animate-fade-in-up'>
+        <h1 className='text-3xl sm:text-5xl md:text-7xl font-bold mb-6 animate-fade-in-up'>
           Transforming Spaces,
           <span className='block text-gray-300'>Elevating Lifestyles</span>
         </h1>
-        <p className='text-xl md:text-2xl mb-8 text-gray-200 animate-fade-in-up animation-delay-200'>
+        <p className='text-base sm:text-xl md:text-2xl mb-8 text-gray-200 animate-fade-in-up animation-delay-200'>
           Innovative, Vastu-Compliant & Turnkey Interior Design Solutions for
           Modern Living
         </p>
@@ -98,6 +98,11 @@ export default function Hero() {
           <Button
             size='lg'
             className='bg-white text-gray-900 hover:bg-gray-100 group'
+            onClick={() =>
+              document
+                .getElementById('projects')
+                ?.scrollIntoView({ behavior: 'smooth' })
+            }
           >
             Explore Our Work
             <ArrowRight className='ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform' />
@@ -106,6 +111,9 @@ export default function Hero() {
             size='lg'
             variant='outline'
             className='border-white text-white hover:bg-white hover:text-gray-900 group bg-transparent'
+            onClick={() =>
+              window.dispatchEvent(new CustomEvent('open-contact-form'))
+            }
           >
             <Play className='mr-2 h-5 w-5' />
             Get Free Consultation
@@ -114,7 +122,7 @@ export default function Hero() {
       </div>
 
       {/* Slide Indicators */}
-      <div className='absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-2'>
+      <div className='absolute bottom-24 md:bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-2'>
         {slides.map((_, index) => (
           <button
             key={index}

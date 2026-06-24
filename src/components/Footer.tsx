@@ -23,18 +23,18 @@ export default function Footer() {
     { name: 'Projects', href: '/#projects' },
     { name: 'Collaborators', href: '/collaborators' },
     { name: 'Contact Us', href: '/#contact' },
-    { name: 'Blog', href: '/#blog' },
+    { name: 'Digital Card', href: '/card' },
   ];
 
   const legalLinks = [
-    { name: 'FAQ', href: '#' },
-    { name: 'Terms of Service', href: '#' },
+    { name: 'FAQ', href: '/faq' },
+    { name: 'Terms of Service', href: '/terms-of-service' },
     { name: 'Privacy Policy', href: '#' },
     { name: 'Refund & Cancellation Policy', href: '#' },
   ];
 
   return (
-    <footer className='bg-gray-900 text-white'>
+    <footer className='hidden md:block bg-gray-900 text-white'>
       <div className='container mx-auto px-4 sm:px-6 lg:px-8 py-12'>
         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8'>
           {/* Company Info */}
@@ -49,7 +49,7 @@ export default function Footer() {
                 href={INSTAGRAM_URL}
                 target='_blank'
                 rel='noopener noreferrer'
-                className='bg-gray-800 p-2 rounded-full hover:bg-gray-700 transition-colors'
+                className='bg-gray-800 p-2 rounded-full hover:bg-gray-700 active:scale-90 transition-all'
                 aria-label='Instagram'
               >
                 <Instagram className='h-5 w-5' />
@@ -58,7 +58,7 @@ export default function Footer() {
                 href={LINKEDIN_URL}
                 target='_blank'
                 rel='noopener noreferrer'
-                className='bg-gray-800 p-2 rounded-full hover:bg-gray-700 transition-colors'
+                className='bg-gray-800 p-2 rounded-full hover:bg-gray-700 active:scale-90 transition-all'
                 aria-label='LinkedIn'
               >
                 <Linkedin className='h-5 w-5' />
@@ -67,7 +67,7 @@ export default function Footer() {
                 href={YOUTUBE_URL}
                 target='_blank'
                 rel='noopener noreferrer'
-                className='bg-gray-800 p-2 rounded-full hover:bg-gray-700 transition-colors'
+                className='bg-gray-800 p-2 rounded-full hover:bg-gray-700 active:scale-90 transition-all'
                 aria-label='YouTube'
               >
                 <Youtube className='h-5 w-5' />

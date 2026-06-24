@@ -100,7 +100,8 @@ export default function Team() {
           </p>
         </div>
 
-        <div className='grid grid-cols-1 lg:grid-cols-2 gap-12'>
+        {/* Desktop */}
+        <div className='hidden md:grid grid-cols-1 lg:grid-cols-2 gap-12'>
           {rendered.map((member, index) => (
             <div
               key={index}
@@ -144,6 +145,65 @@ export default function Team() {
                     </button>
                   </div>
                 </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Mobile */}
+        <div className='md:hidden space-y-5'>
+          {rendered.map((member, index) => (
+            <div
+              key={index}
+              className='team-card bg-white rounded-2xl shadow-md overflow-hidden p-5'
+              style={{ animationDelay: `${index * 150}ms` }}
+            >
+              <div className='flex items-center gap-4 mb-4'>
+                <div className='relative h-20 w-20 flex-shrink-0 rounded-2xl overflow-hidden bg-gray-100'>
+                  <img
+                    src={member.image || '/placeholder.svg'}
+                    alt={member.name}
+                    onError={(event) => {
+                      event.currentTarget.onerror = null;
+                      event.currentTarget.src = member.fallbackImage;
+                    }}
+                    className={`absolute inset-0 h-full w-full object-cover ${member.imagePosition}`}
+                  />
+                </div>
+                <div className='min-w-0'>
+                  <h3 className='text-lg font-bold text-gray-900 truncate'>
+                    {member.name}
+                  </h3>
+                  <span className='inline-block text-xs font-semibold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full mt-1'>
+                    {member.role}
+                  </span>
+                </div>
+              </div>
+
+              <p className='text-sm text-gray-600 leading-relaxed mb-4'>
+                {member.description}
+              </p>
+
+              <div className='flex flex-wrap gap-1.5 mb-4'>
+                {member.expertise.split(',').map((skill) => (
+                  <span
+                    key={skill}
+                    className='text-xs text-gray-600 bg-gray-100 px-2.5 py-1 rounded-full'
+                  >
+                    {skill.trim()}
+                  </span>
+                ))}
+              </div>
+
+              <div className='flex gap-2'>
+                <button className='flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl bg-gray-900 text-white text-sm font-medium active:scale-95 transition-transform'>
+                  <Linkedin className='h-4 w-4' />
+                  LinkedIn
+                </button>
+                <button className='flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl bg-gray-100 text-gray-700 text-sm font-medium active:scale-95 transition-transform'>
+                  <Mail className='h-4 w-4' />
+                  Email
+                </button>
               </div>
             </div>
           ))}

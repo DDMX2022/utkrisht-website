@@ -1,81 +1,15 @@
-import {
-  ArrowRight,
-  Building2,
-  CheckCircle2,
-  Hammer,
-  Home,
-  ShieldCheck,
-  Users,
-} from 'lucide-react';
+import { ArrowRight, CheckCircle2, Home, Users } from 'lucide-react';
 
+import BottomNav from '@/components/BottomNav';
 import Footer from '@/components/Footer';
 import Header from '@/components/Header';
+import PartnersCarousel from '@/components/PartnersCarousel';
 
 export const metadata = {
   title: 'Collaborators | Utkrisht Interiors',
   description:
     'Trusted partners and collaborators working with Utkrisht Interiors across design, execution, and construction projects.',
 };
-
-const partners = [
-  {
-    name: 'Ali Interiors',
-    leader: 'Led by Mr. Aarif Ali',
-    icon: Hammer,
-    description:
-      'Ali Interiors is known for practical execution capabilities and strong on-site management across Noida, Greater Noida, and Delhi NCR. With a focus on quality workmanship and timely project delivery, the team specializes in transforming design concepts into well-executed living spaces.',
-    strengths: [
-      'End-to-end interior execution',
-      'Strong site supervision and project coordination',
-      'Quality-focused craftsmanship',
-      'Timely project completion',
-      'Extensive experience in residential interiors',
-    ],
-  },
-  {
-    name: 'Avni Interiors',
-    leader: 'Led by Mr. Satya Prakash',
-    icon: ShieldCheck,
-    description:
-      'Avni Interiors brings extensive execution expertise and a client-centric approach to interior projects across Noida, Greater Noida, and Delhi NCR. Known for attention to detail and systematic project management, the team works closely with designers and homeowners to ensure every element is executed as envisioned.',
-    strengths: [
-      'Detail-oriented project execution',
-      'Efficient resource and vendor management',
-      'High standards of finishing and quality control',
-      'Strong communication throughout the project lifecycle',
-      'Residential and commercial interior execution experience',
-    ],
-  },
-  {
-    name: 'Mr. Irfan',
-    leader: 'Interior Execution Specialist',
-    icon: Users,
-    description:
-      'With hands-on experience in interior execution across Noida, Greater Noida, and Delhi NCR, Mr. Irfan contributes valuable practical expertise to project delivery. His focus on workmanship, site coordination, and execution efficiency helps ensure smooth project progress and adherence to quality standards.',
-    strengths: [
-      'Skilled execution management',
-      'Practical problem-solving on site',
-      'Coordination of multiple trades and vendors',
-      'Focus on quality workmanship',
-      'Reliable project support and supervision',
-    ],
-  },
-  {
-    name: 'Forever Homes',
-    leader: 'Led by Mr. Ankur Garg',
-    icon: Building2,
-    description:
-      'Forever Homes specializes in comprehensive construction and development services across Delhi NCR. From ground-up construction to turnkey project delivery, the organization manages every stage of the building process with a focus on structural quality, functionality, and long-term value.',
-    strengths: [
-      'End-to-end construction management',
-      'Ground-up residential development',
-      'Turnkey project execution',
-      'Strong project planning and coordination',
-      'Focus on quality, durability, and client satisfaction',
-      'Integrated approach from construction to final handover',
-    ],
-  },
-];
 
 const collaborationPillars = [
   {
@@ -99,6 +33,7 @@ export default function CollaboratorsPage() {
   return (
     <main className='bg-white'>
       <Header />
+      <BottomNav />
 
       <section className='relative min-h-[72vh] flex items-center overflow-hidden'>
         <div className='absolute inset-0'>
@@ -116,10 +51,10 @@ export default function CollaboratorsPage() {
               <Users className='h-4 w-4' />
               Collaborative Design Network
             </div>
-            <h1 className='text-5xl md:text-7xl font-bold mb-6'>
+            <h1 className='text-4xl sm:text-5xl md:text-7xl font-bold mb-6'>
               Collaborators
             </h1>
-            <p className='text-xl md:text-2xl text-gray-200 leading-relaxed max-w-3xl'>
+            <p className='text-base sm:text-xl md:text-2xl text-gray-200 leading-relaxed max-w-3xl'>
               At Utkrisht Interiors, our goal goes beyond building our own
               brand name. We are passionate about designing dream homes and
               creating spaces that truly reflect our clients&apos; vision,
@@ -184,50 +119,8 @@ export default function CollaboratorsPage() {
             </p>
           </div>
 
-          <div className='grid grid-cols-1 lg:grid-cols-2 gap-8'>
-            {partners.map((partner) => {
-              const Icon = partner.icon;
-
-              return (
-                <article
-                  key={partner.name}
-                  className='bg-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 p-8'
-                >
-                  <div className='flex items-start gap-5 mb-6'>
-                    <div className='flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-lg bg-gray-900 text-white'>
-                      <Icon className='h-7 w-7' />
-                    </div>
-                    <div>
-                      <h3 className='text-2xl font-bold text-gray-900'>
-                        {partner.name}
-                      </h3>
-                      <p className='text-gray-500 font-medium'>
-                        {partner.leader}
-                      </p>
-                    </div>
-                  </div>
-
-                  <p className='text-gray-600 leading-relaxed mb-6'>
-                    {partner.description}
-                  </p>
-
-                  <h4 className='font-semibold text-gray-900 mb-4'>
-                    Key Strengths
-                  </h4>
-                  <ul className='space-y-3'>
-                    {partner.strengths.map((strength) => (
-                      <li
-                        key={strength}
-                        className='flex items-start text-gray-600'
-                      >
-                        <span className='mt-2 mr-3 h-2 w-2 flex-shrink-0 rounded-full bg-gray-400' />
-                        {strength}
-                      </li>
-                    ))}
-                  </ul>
-                </article>
-              );
-            })}
+          <div className='max-w-3xl mx-auto px-6 sm:px-10'>
+            <PartnersCarousel />
           </div>
         </div>
       </section>
@@ -252,7 +145,7 @@ export default function CollaboratorsPage() {
             <div className='flex lg:justify-end'>
               <a
                 href='/#contact'
-                className='inline-flex items-center rounded-lg bg-white px-6 py-3 font-semibold text-gray-900 transition-colors hover:bg-gray-100'
+                className='inline-flex items-center rounded-lg bg-white px-6 py-3 font-semibold text-gray-900 transition-all active:scale-95 hover:bg-gray-100'
               >
                 Start a Project
                 <ArrowRight className='ml-2 h-5 w-5' />

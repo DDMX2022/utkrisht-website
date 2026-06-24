@@ -65,23 +65,25 @@ export default function WhyChooseUs() {
           </p>
         </div>
 
-        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8'>
+        <div className='grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8'>
           {stats.map((stat, index) => (
             <div
               key={index}
               className='stat-card opacity-0 text-center group'
               style={{ animationDelay: `${index * 100}ms` }}
             >
-              <div className='flex items-center justify-center w-20 h-20 bg-white text-gray-900 rounded-full mb-6 mx-auto group-hover:scale-110 transition-transform duration-300'>
-                <stat.icon className='h-10 w-10' />
+              <div className='flex items-center justify-center w-14 h-14 md:w-20 md:h-20 bg-white text-gray-900 rounded-full mb-4 md:mb-6 mx-auto group-hover:scale-110 transition-transform duration-300'>
+                <stat.icon className='h-7 w-7 md:h-10 md:w-10' />
               </div>
-              <div className='text-4xl font-bold mb-2 text-white'>
+              <div className='text-2xl md:text-4xl font-bold mb-1 md:mb-2 text-white'>
                 {stat.number}
               </div>
-              <h3 className='text-xl font-semibold mb-4 text-gray-100'>
+              <h3 className='text-sm md:text-xl font-semibold mb-1 md:mb-4 text-gray-100'>
                 {stat.title}
               </h3>
-              <p className='text-gray-400'>{stat.description}</p>
+              <p className='hidden md:block text-gray-400'>
+                {stat.description}
+              </p>
             </div>
           ))}
         </div>

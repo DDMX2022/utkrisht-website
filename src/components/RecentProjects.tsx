@@ -1,5 +1,6 @@
 'use client';
 
+import { AnimatePresence, motion, type PanInfo } from 'framer-motion';
 import { Calendar, ChevronLeft, ChevronRight, MapPin, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
@@ -243,6 +244,8 @@ const fallbackProjects: ProjectDto[] = fallbackProjectSeeds.map((seed) => ({
 
 export default function RecentProjects() {
   const sectionRef = useRef<HTMLElement>(null);
+  const scrollerRef = useRef<HTMLDivElement>(null);
+  const [scrollProgress, setScrollProgress] = useState(0);
   const [filter, setFilter] = useState<'All' | string>('All');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalProjectIndex, setModalProjectIndex] = useState<number | null>(
@@ -273,6 +276,13 @@ export default function RecentProjects() {
     return () => observer.disconnect();
   }, [projects, filter]);
 
+  function handleScroll() {
+    const el = scrollerRef.current;
+    if (!el) return;
+    const max = el.scrollWidth - el.clientWidth;
+    setScrollProgress(max > 0 ? el.scrollLeft / max : 0);
+  }
+
   useEffect(() => {
     (async () => {
       try {
@@ -300,6 +310,15 @@ export default function RecentProjects() {
     'All',
     ...allowed.filter((cat) => projects.some((p) => p.category === cat)),
   ];
+  const categoryCounts: Record<string, number> = {
+    All: projects.length,
+    ...Object.fromEntries(
+      allowed.map((cat) => [
+        cat,
+        projects.filter((p) => p.category === cat).length,
+      ])
+    ),
+  };
   const filteredProjects =
     filter === 'All' ? projects : projects.filter((p) => p.category === filter);
 
@@ -311,6 +330,25 @@ export default function RecentProjects() {
   const closeModal = () => {
     setIsModalOpen(false);
     setModalProjectIndex(null);
+  };
+
+  const activeModalImages =
+    modalProjectIndex !== null
+      ? filteredProjects[modalProjectIndex]?.images?.length || 1
+      : 1;
+
+  const showPrevImage = () =>
+    setModalImageIndex((i) => (i - 1 + activeModalImages) % activeModalImages);
+  const showNextImage = () =>
+    setModalImageIndex((i) => (i + 1) % activeModalImages);
+
+  const handleImageDragEnd = (
+    _e: MouseEvent | TouchEvent | PointerEvent,
+    info: PanInfo
+  ) => {
+    if (activeModalImages <= 1) return;
+    if (info.offset.x < -60) showNextImage();
+    else if (info.offset.x > 60) showPrevImage();
   };
 
   return (
@@ -326,18 +364,27 @@ export default function RecentProjects() {
         </div>
 
         {/* Category Filter */}
-        <div className='flex flex-wrap justify-center gap-3 mb-12'>
+        <div className='flex md:flex-wrap md:justify-center gap-2 mb-12 overflow-x-auto scrollbar-hide md:overflow-visible -mx-4 px-4 md:mx-0 md:px-0'>
           {categories.map((c) => (
             <button
               key={c}
               onClick={() => setFilter(c)}
-              className={`px-4 py-2 rounded-full border transition-colors ${
+              className={`inline-flex shrink-0 items-center gap-1.5 px-4 py-2 rounded-full border transition-all active:scale-95 ${
                 filter === c
                   ? 'bg-gray-900 text-white border-gray-900'
                   : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'
               }`}
             >
               {c}
+              <span
+                className={`text-xs rounded-full px-1.5 py-0.5 ${
+                  filter === c
+                    ? 'bg-white/20 text-white'
+                    : 'bg-gray-100 text-gray-500'
+                }`}
+              >
+                {categoryCounts[c] ?? 0}
+              </span>
             </button>
           ))}
         </div>
@@ -347,60 +394,140 @@ export default function RecentProjects() {
             No projects yet. Add some from Admin.
           </div>
         ) : (
-          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6'>
-            {filteredProjects.map((project, index) => {
-              const cover =
-                project.images?.[0]?.url ||
-                project.summary ||
-                '/placeholder.svg';
-              return (
-                <div
-                  key={project.id}
-                  className='project-card opacity-0 group cursor-pointer'
-                  style={{ animationDelay: `${index * 100}ms` }}
-                  onClick={() => openModal(index)}
-                >
-                  <div className='relative overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-all duration-300'>
-                    <img
-                      src={cover}
-                      alt={project.title}
-                      className='w-full h-64 object-cover group-hover:scale-110 transition-transform duration-300'
-                    />
-                    <div className='absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center'>
-                      <div className='text-center text-white px-4'>
-                        <h3 className='text-lg font-semibold mb-2'>
-                          {project.title}
-                        </h3>
-                        <p className='text-sm text-gray-200'>
+          <>
+            <div className='hidden md:grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6'>
+              {filteredProjects.map((project, index) => {
+                const cover =
+                  project.images?.[0]?.url ||
+                  project.summary ||
+                  '/placeholder.svg';
+                return (
+                  <div
+                    key={project.id}
+                    className='project-card opacity-0 group cursor-pointer rounded-xl shadow-md hover:shadow-xl active:scale-[0.98] transition-all duration-300 bg-white overflow-hidden'
+                    style={{ animationDelay: `${index * 100}ms` }}
+                    onClick={() => openModal(index)}
+                  >
+                    <div className='relative aspect-[4/3] overflow-hidden'>
+                      <img
+                        src={cover}
+                        alt={project.title}
+                        className='absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300'
+                      />
+                      {(project.images?.length ?? 0) > 1 && (
+                        <span className='absolute top-2 right-2 bg-black/60 text-white text-[11px] font-medium px-2 py-0.5 rounded-full'>
+                          {project.images?.length} photos
+                        </span>
+                      )}
+                    </div>
+                    <div className='p-4'>
+                      <h3 className='text-base font-semibold text-gray-900 truncate'>
+                        {project.title}
+                      </h3>
+                      <div className='flex items-center justify-between mt-1'>
+                        <span className='text-sm text-gray-500'>
                           {project.category}
-                        </p>
+                        </span>
+                        {(project.year || project.createdAt) && (
+                          <span className='text-xs text-gray-400'>
+                            {project.year ||
+                              new Date(project.createdAt).getFullYear()}
+                          </span>
+                        )}
                       </div>
                     </div>
                   </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+
+            <div className='md:hidden'>
+              <div
+                ref={scrollerRef}
+                onScroll={handleScroll}
+                className='flex gap-4 overflow-x-auto snap-x snap-mandatory pb-4 scrollbar-hide -mx-4 px-4'
+              >
+                {filteredProjects.map((project, index) => {
+                  const cover =
+                    project.images?.[0]?.url ||
+                    project.summary ||
+                    '/placeholder.svg';
+                  return (
+                    <div
+                      key={project.id}
+                      className='project-card opacity-0 group cursor-pointer snap-center shrink-0 w-[78%] rounded-xl shadow-md active:scale-[0.98] transition-transform bg-white overflow-hidden'
+                      style={{ animationDelay: `${index * 100}ms` }}
+                      onClick={() => openModal(index)}
+                    >
+                      <div className='relative aspect-[4/3] overflow-hidden'>
+                        <img
+                          src={cover}
+                          alt={project.title}
+                          className='absolute inset-0 w-full h-full object-cover'
+                        />
+                        {(project.images?.length ?? 0) > 1 && (
+                          <span className='absolute top-2 right-2 bg-black/60 text-white text-[11px] font-medium px-2 py-0.5 rounded-full'>
+                            {project.images?.length} photos
+                          </span>
+                        )}
+                      </div>
+                      <div className='p-3'>
+                        <h3 className='text-sm font-semibold text-gray-900 truncate'>
+                          {project.title}
+                        </h3>
+                        <span className='text-xs text-gray-500'>
+                          {project.category}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              <div className='text-center text-xs font-medium text-gray-400 mt-1'>
+                {Math.min(
+                  filteredProjects.length,
+                  Math.round(scrollProgress * (filteredProjects.length - 1)) +
+                    1
+                )}{' '}
+                / {filteredProjects.length}
+              </div>
+            </div>
+          </>
         )}
       </div>
 
       {/* Modal */}
-      {isModalOpen &&
-        modalProjectIndex !== null &&
-        filteredProjects[modalProjectIndex] && (
-          <div className='fixed inset-0 z-[200] flex items-center justify-center bg-black/70 p-4'>
-            <div className='bg-white w-full max-w-5xl rounded-lg overflow-hidden shadow-2xl relative'>
+      <AnimatePresence>
+        {isModalOpen &&
+          modalProjectIndex !== null &&
+          filteredProjects[modalProjectIndex] && (
+            <motion.div
+              className='fixed inset-0 z-[200] flex items-end sm:items-center justify-center bg-black/70 p-0 sm:p-4 overflow-y-auto'
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={closeModal}
+            >
+              <motion.div
+                className='bg-white w-full max-w-5xl rounded-t-2xl sm:rounded-lg overflow-hidden shadow-2xl relative'
+                initial={{ y: '100%' }}
+                animate={{ y: 0 }}
+                exit={{ y: '100%' }}
+                transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+                onClick={(e) => e.stopPropagation()}
+              >
               <button
                 onClick={closeModal}
-                className='absolute top-3 right-3 p-2 rounded-full bg-black/70 text-white hover:bg-black'
+                className='absolute top-3 right-3 z-10 p-2 rounded-full bg-black/70 text-white hover:bg-black active:scale-90 transition-transform'
               >
                 <X className='h-5 w-5' />
               </button>
 
               <div className='grid grid-cols-1 lg:grid-cols-2'>
                 {/* Carousel */}
-                <div className='relative bg-black flex items-center justify-center h-[480px] lg:h-[560px]'>
-                  <img
+                <div className='relative bg-black flex items-center justify-center h-64 sm:h-80 lg:h-[560px] overflow-hidden touch-pan-y'>
+                  <motion.img
+                    key={modalImageIndex}
                     src={
                       (filteredProjects[modalProjectIndex].images?.map(
                         (i) => i.url
@@ -408,65 +535,74 @@ export default function RecentProjects() {
                     }
                     alt={filteredProjects[modalProjectIndex].title}
                     className='max-w-full max-h-full object-contain'
+                    drag={activeModalImages > 1 ? 'x' : false}
+                    dragConstraints={{ left: 0, right: 0 }}
+                    dragElastic={0.6}
+                    onDragEnd={handleImageDragEnd}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.15 }}
                   />
-                  <button
-                    onClick={() =>
-                      setModalImageIndex(
-                        (i) =>
-                          (i -
-                            1 +
-                            (filteredProjects[modalProjectIndex].images
-                              ?.length || 1)) %
-                          (filteredProjects[modalProjectIndex].images?.length ||
-                            1)
-                      )
-                    }
-                    className='absolute left-3 top-1/2 -translate-y-1/2 bg-black/60 text-white p-2 rounded-full'
-                  >
-                    <ChevronLeft className='h-5 w-5' />
-                  </button>
-                  <button
-                    onClick={() =>
-                      setModalImageIndex(
-                        (i) =>
-                          (i + 1) %
-                          (filteredProjects[modalProjectIndex].images?.length ||
-                            1)
-                      )
-                    }
-                    className='absolute right-3 top-1/2 -translate-y-1/2 bg-black/60 text-white p-2 rounded-full'
-                  >
-                    <ChevronRight className='h-5 w-5' />
-                  </button>
-
-                  {/* Thumbnails */}
-                  <div className='absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2 bg-white/80 rounded-md px-2 py-1 backdrop-blur-sm'>
-                    {(
-                      filteredProjects[modalProjectIndex].images?.map(
-                        (i) => i.url
-                      ) || ['/placeholder.svg']
-                    ).map((img, i) => (
+                  {(filteredProjects[modalProjectIndex].images?.length ?? 0) >
+                    1 && (
+                    <>
                       <button
-                        key={i}
-                        onClick={() => setModalImageIndex(i)}
-                        className={`h-12 w-16 overflow-hidden rounded border ${
-                          i === modalImageIndex
-                            ? 'border-gray-900'
-                            : 'border-transparent'
-                        }`}
+                        onClick={showPrevImage}
+                        className='hidden sm:flex absolute left-3 top-1/2 -translate-y-1/2 bg-black/60 text-white p-2 rounded-full active:scale-90 transition-transform'
                       >
-                        <img
-                          src={img}
-                          alt={`thumb-${i}`}
-                          className='h-full w-full object-cover'
-                        />
+                        <ChevronLeft className='h-5 w-5' />
                       </button>
-                    ))}
-                  </div>
+                      <button
+                        onClick={showNextImage}
+                        className='hidden sm:flex absolute right-3 top-1/2 -translate-y-1/2 bg-black/60 text-white p-2 rounded-full active:scale-90 transition-transform'
+                      >
+                        <ChevronRight className='h-5 w-5' />
+                      </button>
+
+                      {/* Dots (mobile) */}
+                      <div className='sm:hidden absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5'>
+                        {filteredProjects[modalProjectIndex].images!.map(
+                          (_, i) => (
+                            <span
+                              key={i}
+                              className={`h-1.5 rounded-full transition-all ${
+                                i === modalImageIndex
+                                  ? 'w-4 bg-white'
+                                  : 'w-1.5 bg-white/40'
+                              }`}
+                            />
+                          )
+                        )}
+                      </div>
+
+                      {/* Thumbnails (desktop) */}
+                      <div className='hidden sm:flex absolute bottom-3 left-1/2 -translate-x-1/2 gap-2 bg-white/80 rounded-md px-2 py-1 backdrop-blur-sm'>
+                        {filteredProjects[modalProjectIndex].images!.map(
+                          (img, i) => (
+                            <button
+                              key={i}
+                              onClick={() => setModalImageIndex(i)}
+                              className={`h-12 w-16 overflow-hidden rounded border ${
+                                i === modalImageIndex
+                                  ? 'border-gray-900'
+                                  : 'border-transparent'
+                              }`}
+                            >
+                              <img
+                                src={img.url}
+                                alt={`thumb-${i}`}
+                                className='h-full w-full object-cover'
+                              />
+                            </button>
+                          )
+                        )}
+                      </div>
+                    </>
+                  )}
                 </div>
 
                 {/* Details */}
-                <div className='p-6 lg:p-8 max-h-[560px] overflow-y-auto'>
+                <div className='p-6 lg:p-8 lg:max-h-[560px] lg:overflow-y-auto'>
                   <h3 className='text-2xl font-bold text-gray-900 mb-2'>
                     {filteredProjects[modalProjectIndex].title}
                   </h3>
@@ -507,9 +643,10 @@ export default function RecentProjects() {
                   )}
                 </div>
               </div>
-            </div>
-          </div>
-        )}
+              </motion.div>
+            </motion.div>
+          )}
+      </AnimatePresence>
     </section>
   );
 }
