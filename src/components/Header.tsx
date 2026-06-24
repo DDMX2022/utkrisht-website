@@ -8,8 +8,14 @@ import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import SideDrawer from '@/components/SideDrawer';
 
-export default function Header() {
+export default function Header({
+  transparent = false,
+}: {
+  /** Set when the page renders a dark hero directly behind the header */
+  transparent?: boolean;
+}) {
   const [isScrolled, setIsScrolled] = useState(false);
+  const showLightText = transparent && !isScrolled;
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [quoteOpen, setQuoteOpen] = useState(false); // NEW
   const [submitting, setSubmitting] = useState(false); // NEW
@@ -68,13 +74,21 @@ export default function Header() {
   return (
     <header
       className={`fixed top-0 w-full z-[100] transition-all duration-300 ${
-        isScrolled ? 'bg-white/95 backdrop-blur-md shadow-lg' : 'bg-transparent'
+        showLightText
+          ? 'bg-transparent'
+          : 'bg-white/95 backdrop-blur-md shadow-lg'
       }`}
     >
       <div className='container mx-auto px-4 sm:px-6 lg:px-8'>
         <div className='flex items-center justify-between h-16'>
           <div className='flex-shrink-0'>
-            <h1 className='text-2xl font-bold text-gray-900'>Utkrisht</h1>
+            <h1
+              className={`text-2xl font-bold transition-colors duration-300 ${
+                showLightText ? 'text-white' : 'text-gray-900'
+              }`}
+            >
+              Utkrisht
+            </h1>
           </div>
 
           <nav className='hidden md:block'>
@@ -83,7 +97,11 @@ export default function Header() {
                 <a
                   key={item.name}
                   href={item.href}
-                  className='text-gray-700 hover:text-gray-900 px-2 py-2 text-sm font-medium transition-colors duration-200 hover:scale-105'
+                  className={`px-2 py-2 text-sm font-medium transition-colors duration-200 hover:scale-105 ${
+                    showLightText
+                      ? 'text-white/90 hover:text-white'
+                      : 'text-gray-700 hover:text-gray-900'
+                  }`}
                 >
                   {item.name}
                 </a>
@@ -103,10 +121,18 @@ export default function Header() {
           <button
             type='button'
             onClick={() => setDrawerOpen(true)}
-            className='md:hidden w-10 h-10 flex items-center justify-center rounded-full bg-gray-900/5 active:bg-gray-900/10 transition-colors'
+            className={`md:hidden w-10 h-10 flex items-center justify-center rounded-full transition-colors ${
+              showLightText
+                ? 'bg-white/10 active:bg-white/20'
+                : 'bg-gray-900/5 active:bg-gray-900/10'
+            }`}
             aria-label='Open menu'
           >
-            <Menu className='h-5 w-5 text-gray-900' />
+            <Menu
+              className={`h-5 w-5 transition-colors ${
+                showLightText ? 'text-white' : 'text-gray-900'
+              }`}
+            />
           </button>
 
         </div>

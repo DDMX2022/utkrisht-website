@@ -1,6 +1,10 @@
 import './globals.css';
 
+import Script from 'next/script';
+
 import Providers from '@/components/Providers';
+
+const GA_MEASUREMENT_ID = 'G-07Y55JEKL6';
 
 export const metadata = {
   title: 'Utkrisht - Interior Design',
@@ -21,6 +25,18 @@ export default function RootLayout({
   return (
     <html lang='en'>
       <body className='font-sans'>
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+          strategy='afterInteractive'
+        />
+        <Script id='ga4-init' strategy='afterInteractive'>
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${GA_MEASUREMENT_ID}');
+          `}
+        </Script>
         <Providers>{children}</Providers>
       </body>
     </html>

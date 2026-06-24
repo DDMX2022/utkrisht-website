@@ -32,7 +32,7 @@ const collaborationPillars = [
 export default function CollaboratorsPage() {
   return (
     <main className='bg-white'>
-      <Header />
+      <Header transparent />
       <BottomNav />
 
       <section className='relative min-h-[72vh] flex items-center overflow-hidden'>

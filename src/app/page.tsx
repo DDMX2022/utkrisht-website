@@ -15,7 +15,7 @@ import WhyChooseUs from '@/components/WhyChooseUs';
 export default function Home() {
   return (
     <main>
-      <Header />
+      <Header transparent />
       <BottomNav />
       <Hero />
       <AboutUs />
